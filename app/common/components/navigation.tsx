@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { Separator } from "./ui/separator";
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "./ui/navigation-menu";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "./ui/navigation-menu";
+import { cn } from "~/lib/utils";
 
 const menus = [
     {
@@ -127,17 +128,38 @@ export default function Navigation() {
                 <NavigationMenu>
                     <NavigationMenuList>
                         {menus.map((menu) => (
-                            <NavigationMenuItem key={menu.name}>
-                                <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
-                                {menu.items && (
-                                    <NavigationMenuContent>
-                                        {menu.items.map((item) => (
-                                            <NavigationMenuLink asChild key={item.name} className="flex flex-col gap-2 hover:bg-transparent">
-                                                <Link to={item.to}>{item.name}</Link>
-                                            </NavigationMenuLink>
-                                        ))}
-                                    </NavigationMenuContent>
-                                )}
+                            <NavigationMenuItem key={menu.name} >
+                                {menu.items ?
+                                    <>
+                                        <Link to={menu.to}>
+                                            <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
+                                        </Link>
+                                        <NavigationMenuContent >
+                                            <ul className="grid grid-cols-2 font-light gap-2 p-6 md:w-[500px] lg:w-[500px]">
+                                                {menu.items &&
+                                                    menu.items.map((item) => (
+                                                        <li
+                                                            key={item.name}
+                                                            className={cn([
+                                                                "select-none rounded-md transition-colors focus:bg-accent hover:bg-accent",
+                                                                item.to === "/products/promote" && "col-span-2 bg-accent hover:bg-primary/20 focus:bg-primary/20 ",
+                                                                item.to === "/jobs/submit" && "col-span-2 bg-accent hover:bg-primary/20 focus:bg-primary/20"
+                                                            ])}>
+                                                            <NavigationMenuLink asChild>
+                                                                <Link
+                                                                    className="p-2 space-x-1 block leading-none no-underline outline-none "
+                                                                    to={item.to}>
+                                                                    <span className="text-sm font-medium leading-none">{item.name}</span>
+                                                                    <p className="text-sm leading-snug text-muted-foreground">{item.description}</p>
+                                                                </Link>
+                                                            </NavigationMenuLink>
+                                                        </li>
+                                                    ))
+                                                }
+                                            </ul>
+                                        </NavigationMenuContent>
+                                    </> : <Link className={navigationMenuTriggerStyle()} to={menu.to}>{menu.name}</Link>}
+
                             </NavigationMenuItem>
                         ))}
                     </NavigationMenuList>
