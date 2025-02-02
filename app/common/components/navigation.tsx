@@ -1,7 +1,27 @@
 import { Link } from "react-router";
 import { Separator } from "./ui/separator";
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "./ui/navigation-menu";
 import { cn } from "~/lib/utils";
+import { Button } from "./ui/button";
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+    navigationMenuTriggerStyle
+} from "./ui/navigation-menu";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "./ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import { BellIcon, CreditCardIcon, LogOutIcon, MessageCircleIcon, SettingsIcon, UserIcon } from "lucide-react";
 
 const menus = [
     {
@@ -119,7 +139,10 @@ const menus = [
     }
 ]
 
-export default function Navigation() {
+export default function Navigation(
+    { isLoggedIn, hasNotifications, hasMessages }
+        : { isLoggedIn: boolean, hasNotifications: boolean, hasMessages: boolean }) {
+
     return (
         <nav className="flex flex-row px-20 h-16 items-center justify-between backdrop-blur fixed top-0 left-0 right-0 z-50 bg-slate-500" >
             <div className="flex items-center gap-2">
@@ -165,5 +188,81 @@ export default function Navigation() {
                     </NavigationMenuList>
                 </NavigationMenu>
             </div>
+            {isLoggedIn
+                ?
+                <div className="flex items-center flex-row gap-2">
+                    <Button size="icon" variant="ghost" asChild className="relative hover:bg-transparent">
+                        <Link to="/my/notifications">
+                            <BellIcon className="size-4" />
+                            {hasNotifications && <div className="absolute top-0 right-0 size-2 bg-red-500 rounded-full"></div>}
+                        </Link>
+                    </Button>
+                    <Button size="icon" variant="ghost" asChild className="relative hover:bg-transparent">
+                        <Link to="/my/messages">
+                            <MessageCircleIcon className="size-4" />
+                            {hasMessages && <div className="absolute top-0 right-0 size-2 bg-red-500 rounded-full"></div>}
+                        </Link>
+                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Avatar>
+                                <AvatarImage src="https://github.com/azerckid.png" />
+                                <AvatarFallback>U</AvatarFallback>
+                            </Avatar>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-64">
+                            <DropdownMenuLabel className="flex flex-row gap-2">
+                                <Avatar>
+                                    <AvatarImage src="https://github.com/azerckid.png" />
+                                    <AvatarFallback>U</AvatarFallback>
+                                </Avatar>
+                                <div className="flex flex-col">
+                                    <span className="text-sm font-medium">azerckid</span>
+                                    <span className="text-sm text-muted-foreground">azerckid@gmail.com</span>
+                                </div>
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                    <Link to="/profile">
+                                        <UserIcon className="size-4 mr-2" />
+                                        <span>Profile</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                    <Link to="/my/settings">
+                                        <SettingsIcon className="size-4 mr-2" />
+                                        <span>Settings</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                    <Link to="/billing">
+                                        <CreditCardIcon className="size-4 mr-2" />
+                                        <span>Billing</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                    <Link to="/auth/logout">
+                                        <LogOutIcon className="size-4 mr-2" />
+                                        <span>Logout</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+                : (
+                    <div className="flex flex-row gap-2">
+                        <Button asChild variant="secondary">
+                            <Link to="/auth/login">Login</Link>
+                        </Button>
+                        <Button asChild>
+                            <Link to="/auth/join">Join</Link>
+                        </Button>
+                    </div>
+                )}
         </nav >)
 }
