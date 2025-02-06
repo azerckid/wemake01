@@ -2,9 +2,8 @@ import type { MetaFunction } from "react-router";
 import { ProductCard } from "~/features/products/components/product-card";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router";
-import { Card, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { PostCard } from "~/features/community/components/post-card";
+import { IdeaCard } from "~/features/ideas/components/idea-card";
 
 export const meta: MetaFunction = () => {
     return [
@@ -56,6 +55,26 @@ export default function HomePage() {
                         authorAvatarFallback="CN"
                         category="Productivity"
                         postedAt="12 hours ago"
+                    />
+                ))}
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold leading-tight tracking-tight">IdeasGPT</h2>
+                    <p className="text-sm text-muted-foreground">Find ideas for your next project.</p>
+                    <Button variant="link" asChild className="text-lg p-0">
+                        <Link to="/community" className="text-red-500">Explore all ideas &rarr;</Link>
+                    </Button>
+                </div>
+                {Array.from({ length: 11 }).map((_, index) => (
+                    <IdeaCard
+                        key={index}
+                        id={`ideaId-${index}`}
+                        title="A startup that create an AI-powered generated personal trainer, delivering customized fitness recommendations and tracking of progress using a mobile app to track workouts and progress as well as website to manage the business."
+                        viewCount={100}
+                        postedAt="12 hours ago"
+                        likeCount={100}
+                        claimed={index % 2 === 0}
                     />
                 ))}
             </div>
