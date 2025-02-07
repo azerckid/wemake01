@@ -4,6 +4,9 @@ import { Button } from "../components/ui/button";
 import { Link } from "react-router";
 import { PostCard } from "~/features/community/components/post-card";
 import { IdeaCard } from "~/features/ideas/components/idea-card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { JobCard } from "~/features/jobs/components/job-card";
 
 export const meta: MetaFunction = () => {
     return [
@@ -75,6 +78,33 @@ export default function HomePage() {
                         postedAt="12 hours ago"
                         likeCount={100}
                         claimed={index % 2 === 0}
+                    />
+                ))}
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold leading-tight tracking-tight">Latest Jobs</h2>
+                    <p className="text-sm text-muted-foreground">Find your dream job.</p>
+                    <Button variant="link" asChild className="text-lg p-0">
+                        <Link to="/jobs" className="text-red-500">Explore all jobs &rarr;</Link>
+                    </Button>
+                </div>
+                {Array.from({ length: 11 }).map((_, index) => (
+                    <JobCard
+                        key={index}
+                        id="jobId"
+                        company="Tesla"
+                        companyHQ="San Francisco, CA"
+                        companyLogoUrl="https://github.com/facebook.png"
+                        title="Software Engineer"
+                        postedAt="12 hours ago"
+                        type="Full-time"
+                        isRemote={true}
+                        salary={{
+                            min: 100000,
+                            max: 120000,
+                            currency: "$"
+                        }}
                     />
                 ))}
             </div>
