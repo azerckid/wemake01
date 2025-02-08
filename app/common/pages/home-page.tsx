@@ -7,6 +7,9 @@ import { IdeaCard } from "~/features/ideas/components/idea-card";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { JobCard } from "~/features/jobs/components/job-card";
+import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
+import { ArrowRight } from "lucide-react";
+import { TeamCard } from "~/features/teams/components/team-card";
 
 export const meta: MetaFunction = () => {
     return [
@@ -105,6 +108,34 @@ export default function HomePage() {
                             max: 120000,
                             currency: "$"
                         }}
+                    />
+                ))}
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold leading-tight tracking-tight">Find a team mate</h2>
+                    <p className="text-sm text-muted-foreground">Join a team to lookng for a team mate.</p>
+                    <Button variant="link" asChild className="text-lg p-0">
+                        <Link to="/teams" className="text-red-500">Explore all teams &rarr;</Link>
+                    </Button>
+                </div>
+                {Array.from({ length: 11 }).map((_, index) => (
+                    <TeamCard
+                        key={index}
+                        id="teamId"
+                        leader={{
+                            username: "azerckid",
+                            avatarUrl: "https://github.com/azerckid.png",
+                            avatarFallback: "N"
+                        }}
+                        roles={[
+                            "React developer",
+                            "Backend developer",
+                            "Full-stack developer",
+                            "DevOps engineer",
+                            "QA engineer"
+                        ]}
+                        projectDescription="AI-powered personal project"
                     />
                 ))}
             </div>
