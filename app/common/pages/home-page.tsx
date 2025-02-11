@@ -4,13 +4,9 @@ import { Button } from "../components/ui/button";
 import { Link } from "react-router";
 import { PostCard } from "~/features/community/components/post-card";
 import { IdeaCard } from "~/features/ideas/components/idea-card";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
 import { JobCard } from "~/features/jobs/components/job-card";
-import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
-import { ArrowRight } from "lucide-react";
 import { TeamCard } from "~/features/teams/components/team-card";
-
+import type { Route } from "~/+types/root";
 export const meta: MetaFunction = () => {
     return [
         { title: "Home | wemake" },
@@ -18,7 +14,13 @@ export const meta: MetaFunction = () => {
     ]
 }
 
-export default function HomePage() {
+export const loader = async () => {
+    return {
+        hello: "world"
+    }
+}
+
+export default function HomePage({ loaderData }: Route.ComponentProps<typeof loader>) {
     return (
         <div className="px-20 space-y-40">
             <div className="grid grid-cols-3 gap-4">
