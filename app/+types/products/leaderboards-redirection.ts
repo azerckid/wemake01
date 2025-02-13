@@ -4,9 +4,7 @@ export namespace Route {
     export type MetaFunction = RouterMetaFunction;
     export interface LoaderArgs {
         params: {
-            year: string;
-            month: string;
-            day: string;
+            period: string;
         };
     }
 } 

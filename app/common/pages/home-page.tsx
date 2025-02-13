@@ -39,8 +39,8 @@ export default function HomePage() {
                         upvoteCount={1000}
                     />
                 ))}
-
             </div>
+
             <div className="grid grid-cols-3 gap-4">
                 <div>
                     <h2 className="text-2xl font-bold leading-tight tracking-tight">Latest Discussions</h2>

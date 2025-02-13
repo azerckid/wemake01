@@ -5,4 +5,10 @@ export namespace Route {
     export interface ComponentProps<T extends (...args: any) => any> {
         loaderData: Awaited<ReturnType<T>>;
     }
+    export interface LinksFunction {
+        (): { rel: string; href: string; crossOrigin?: string; }[];
+    }
+    export interface ErrorBoundaryProps {
+        error: Error;
+    }
 }
