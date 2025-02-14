@@ -9,4 +9,10 @@ export namespace Route {
             day: string;
         };
     }
+    export interface ErrorBoundaryProps {
+        error: Error;
+    }
+    export interface ComponentProps<T extends (...args: any) => any> {
+        loaderData: Awaited<ReturnType<T>>;
+    }
 } 
