@@ -17,7 +17,7 @@ interface ProductPaginationProps {
 
 export default function ProductPagination({ totalPages }: ProductPaginationProps) {
     const [searchParams, setSearchParams] = useSearchParams();
-    const currentPage = Number(searchParams.get("page")) ?? 1;
+    const currentPage = Number(searchParams.get("page") ?? 1);
     if (isNaN(currentPage) || currentPage < 1 || currentPage > totalPages) {
         return null;
     }
