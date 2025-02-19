@@ -123,9 +123,15 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     return <div>Unknown error</div>;
 }
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({ params, data }) => {
+    const urlDate = DateTime.fromObject({
+        year: Number(params.year),
+        month: Number(params.month),
+        day: Number(params.day)
+    }).setZone("Asia/Seoul").setLocale("ko");
+    console.log(data);
+
     return [
-        { title: "Daily Leaderboards | Products | wemake" },
-        { name: "description", content: "Top products of the day" }
+        { title: `best of ${urlDate.toLocaleString(DateTime.DATE_MED)}` },
     ];
 }; 

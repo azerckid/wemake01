@@ -127,9 +127,14 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     return <div>Unknown error</div>;
 }
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({ params, data }) => {
+    const urlDate = DateTime.fromObject({
+        weekYear: Number(params.year),
+        weekNumber: Number(params.week)
+    }).setZone("Asia/Seoul").setLocale("ko");
+    console.log(data);
+
     return [
-        { title: "Weekly Leaderboards | Products | wemake" },
-        { name: "description", content: "Top products of the week" }
+        { title: `best of week ${urlDate.startOf("week").toLocaleString(DateTime.DATE_SHORT)}-${urlDate.endOf("week").toLocaleString(DateTime.DATE_SHORT)}| wemake` },
     ];
 }; 

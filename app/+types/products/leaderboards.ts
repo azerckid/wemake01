@@ -15,4 +15,11 @@ export namespace Route {
     export interface ComponentProps<T extends (...args: any) => any> {
         loaderData: Awaited<ReturnType<T>>;
     }
+    export interface MetaArgs {
+        params: {
+            year: string;
+            month: string;
+            day: string;
+        };
+    }
 } 
