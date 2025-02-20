@@ -158,7 +158,7 @@ export default function Navigation(
                                             <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
                                         </Link>
                                         <NavigationMenuContent >
-                                            <ul className="grid grid-cols-2 font-light gap-2 p-6 md:w-[500px] lg:w-[500px]">
+                                            <ul className="grid grid-cols-2 font-light gap-2 p-6 md:w-[500px] lg:w-[500px] bg-background">
                                                 {menu.items &&
                                                     menu.items.map((item) => (
                                                         <li
