@@ -1,22 +1,20 @@
 import type { Route } from "~/+types/products/categories";
 import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
+import { Hero } from "~/common/components/hero";
+import ProductPagination from "~/common/components/product-pagination";
 
 export default function CategoryPage() {
+    const { category } = useParams();
     return (
-        <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold">Category Products</h1>
-                    <p className="text-muted-foreground">Browse products in this category</p>
-                </div>
-                <Button asChild variant="outline">
-                    <Link to="/products/categories">Back to Categories</Link>
-                </Button>
-            </div>
+        <div className="space-y-10">
+            <Hero title={`Category ${category}`} description={`Products in the ${category} category`} />
+            <Button asChild variant="outline">
+                <Link to="/products/categories">Back to Categories</Link>
+            </Button>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-5 w-full max-w-screen-lg mx-auto">
                 {Array.from({ length: 10 }).map((_, index) => (
                     <ProductCard
                         key={index}
@@ -29,13 +27,14 @@ export default function CategoryPage() {
                     />
                 ))}
             </div>
+            <ProductPagination totalPages={10} />
         </div>
     );
 }
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({ params }) => {
     return [
-        { title: "Category | Products | wemake" },
-        { name: "description", content: "Products in this category" }
+        { title: `Category ${params.category} | ProductHunt Clone` },
+        { name: "description", content: `Products in the ${params.category} category` }
     ];
 }; 

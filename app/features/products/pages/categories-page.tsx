@@ -1,31 +1,28 @@
 import type { Route } from "~/+types/products/categories";
-import { Button } from "~/common/components/ui/button";
-import { Link } from "react-router";
+import { Hero } from "~/common/components/hero";
+import { CategoryCard } from "../components/category-card";
 
-const categories = [
-    { id: "ai", name: "AI & ML", count: 150 },
-    { id: "productivity", name: "Productivity", count: 89 },
-    { id: "developer-tools", name: "Developer Tools", count: 234 },
-    { id: "design", name: "Design", count: 167 },
-    { id: "marketing", name: "Marketing", count: 123 },
-];
+// const categories = [
+//     { id: "ai", name: "AI & ML", productCount: 150 },
+//     { id: "productivity", name: "Productivity", productCount: 89 },
+//     { id: "developer-tools", name: "Developer Tools", productCount: 234 },
+//     { id: "design", name: "Design", productCount: 167 },
+//     { id: "marketing", name: "Marketing", productCount: 123 },
+// ];
 
 export default function CategoriesPage() {
     return (
-        <div className="container mx-auto px-4">
-            <h1 className="text-2xl font-bold mb-8">Product Categories</h1>
-            <div className="grid grid-cols-3 gap-4">
-                {categories.map((category) => (
-                    <Link
-                        key={category.id}
-                        to={`/products/categories/${category.id}`}
-                        className="block"
-                    >
-                        <Button variant="outline" className="w-full justify-between">
-                            <span>{category.name}</span>
-                            <span className="text-muted-foreground">{category.count}</span>
-                        </Button>
-                    </Link>
+        <div className="space-y-10">
+            <Hero title="Categories" description="Browse products by category" />
+            <div className="grid grid-cols-4 gap-10">
+                {Array.from({ length: 10 }).map((_, index) => (
+                    <CategoryCard
+                        key={index}
+                        id={`category-${index}`}
+                        name={`Category ${index}`}
+                        productCount={100}
+                        description={`Category ${index} description`}
+                    />
                 ))}
             </div>
         </div>
