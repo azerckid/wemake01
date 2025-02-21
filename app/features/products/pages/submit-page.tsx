@@ -4,6 +4,10 @@ import { Form } from "~/common/components/ui/form";
 import { useForm } from "react-hook-form";
 import InputPair from "~/common/components/input-pair";
 import SelectPair from "~/common/components/select-pair";
+import { Input } from "~/common/components/ui/input";
+import { Label } from "~/common/components/ui/label";
+import { useState } from "react";
+import { Button } from "~/common/components/ui/button";
 
 export const action = async () => {
     return { success: true };
@@ -11,6 +15,14 @@ export const action = async () => {
 
 export default function SubmitPage({ actionData }: Route.ComponentProps<typeof action>) {
     const form = useForm();
+    const [icon, setIcon] = useState<File | null>(null);
+
+    const onChangeIcon = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setIcon(file);
+        }
+    };
     return (
         <div className="space-y-10">
             <Hero title="Submit Your Product" description="Share your product with the community" />
@@ -62,9 +74,38 @@ export default function SubmitPage({ actionData }: Route.ComponentProps<typeof a
                                 { label: "Category 3", value: "category-3" },
                             ]}
                         />
+                        <Button type="submit" className="w-full" size="lg">Submit</Button>
                     </div>
+                    <div className="flex flex-col space-y-2">
+                        <div className="size-40 rounded-xl shadow-xl overflow-hidden">
+                            {icon && (
+                                <img
+                                    src={URL.createObjectURL(icon)}
+                                    alt="Icon"
+                                    className="w-full h-full object-cover"
+                                />
+                            )}
+                        </div>
+                        <Label className="flex flex-col gap-1">
+                            Icon{""}
+                            <small className="text-muted-foreground">
+                                The icon of your product.
+                            </small>
+                        </Label>
+                        <Input type="file" id="icon" name="icon" className="w-1/2" onChange={onChangeIcon} />
+                        <div className="flex flex-col gap-1 text-xs">
+                            <span className="text-muted-foreground">
+                                Recommended size: 128x128px
+                            </span>
+                            <span className="text-muted-foreground">
+                                Recommended format: PNG
+                            </span>
+                            <span className="text-muted-foreground">
+                                Recommended file size: 100KB
+                            </span>
+                        </div>
 
-
+                    </div>
                 </form>
             </Form>
         </div>
