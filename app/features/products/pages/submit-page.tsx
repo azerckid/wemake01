@@ -104,7 +104,6 @@ export default function SubmitPage({ actionData }: Route.ComponentProps<typeof a
                                 Recommended file size: 100KB
                             </span>
                         </div>
-
                     </div>
                 </form>
             </Form>
