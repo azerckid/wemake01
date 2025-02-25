@@ -14,7 +14,7 @@ interface ProductCardProps {
 
 export function ProductCard({ id, name, description, commentCount, viewCount, upvoteCount }: ProductCardProps) {
     return (
-        <Link to={`/product/${id}`} className="block">
+        <Link to={`/products/${id}`} className="block">
             <Card className="w-full flex items-center justify-between bg-transparent hover:bg-card/50 transition-all duration-300">
                 <CardHeader>
                     <CardTitle className="text-2xl font-semibold leading-none tracking-tight">{name}</CardTitle>
