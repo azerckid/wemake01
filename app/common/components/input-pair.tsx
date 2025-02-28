@@ -14,7 +14,7 @@ export type InputPairProps = {
 export default function InputPair({ label, description, textArea = false, ...rest }: InputPairProps & InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>) {
     return (
         <div className="space-y-2">
-            <Label htmlFor={rest.id}>
+            <Label htmlFor={rest.id} className="flex flex-col gap-2">
                 {label}
                 <small className="text-gray-500">
                     {description}
