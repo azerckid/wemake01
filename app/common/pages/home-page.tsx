@@ -67,7 +67,7 @@ export default function HomePage() {
                     <h2 className="text-2xl font-bold leading-tight tracking-tight">IdeasGPT</h2>
                     <p className="text-sm text-muted-foreground">Find ideas for your next project.</p>
                     <Button variant="link" asChild className="text-lg p-0">
-                        <Link to="/community" className="text-red-500">Explore all ideas &rarr;</Link>
+                        <Link to="/ideas" className="text-red-500">Explore all ideas &rarr;</Link>
                     </Button>
                 </div>
                 {Array.from({ length: 11 }).map((_, index) => (
