@@ -3,6 +3,7 @@
 > Create the route files, do not modify files that already exist. Only create new files
 > abstract to /features/products/components/category-card.tsx use content as props
 > abstract this component to /app/features/teams/components/team-card.tsx use props for content
+> abstract to /features/community/components/reply.tsx use content as props
 
 # Welcome to React Router!
 
