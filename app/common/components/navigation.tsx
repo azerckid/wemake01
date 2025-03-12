@@ -144,7 +144,7 @@ export default function Navigation(
         : { isLoggedIn: boolean, hasNotifications: boolean, hasMessages: boolean }) {
 
     return (
-        <nav className="flex flex-row px-20 h-16 items-center justify-between backdrop-blur fixed top-0 left-0 right-0 z-50 bg-slate-500" >
+        <nav className="flex flex-row px-20 h-16 items-center justify-between backdrop-blur fixed top-0 left-0 right-0 z-50 bg-background" >
             <div className="flex items-center gap-2">
                 <Link to="/" className="font-bold tracking-tighter text-lg"> wemake</Link>
                 <Separator orientation="vertical" className="h-6 mx-4"></Separator>

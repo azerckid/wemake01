@@ -121,17 +121,11 @@ export default function HomePage() {
                     <TeamCard
                         key={index}
                         id="teamId"
-                        leader={{
-                            username: "azerckid",
-                            avatarUrl: "https://github.com/azerckid.png",
-                            avatarFallback: "N"
-                        }}
-                        roles={[
+                        leaderUsername="zizimoos"
+                        leaderAvatarUrl="https://github.com/zizimoos.png"
+                        positions={[
                             "React developer",
                             "Backend developer",
-                            "Full-stack developer",
-                            "DevOps engineer",
-                            "QA engineer"
                         ]}
                         projectDescription="AI-powered personal project"
                     />
