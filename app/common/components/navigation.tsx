@@ -21,7 +21,7 @@ import {
     DropdownMenuTrigger
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
-import { BellIcon, CreditCardIcon, LogOutIcon, MessageCircleIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { BellIcon, CreditCardIcon, LogOutIcon, MessageCircleIcon, SettingsIcon, UserIcon, LayoutDashboardIcon } from "lucide-react";
 
 const menus = [
     {
@@ -224,7 +224,13 @@ export default function Navigation(
                             <DropdownMenuSeparator />
                             <DropdownMenuGroup>
                                 <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
-                                    <Link to="/profile">
+                                    <Link to="/my/dashboard">
+                                        <LayoutDashboardIcon className="size-4 mr-2" />
+                                        <span>Dashboard</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                    <Link to="/my/profile">
                                         <UserIcon className="size-4 mr-2" />
                                         <span>Profile</span>
                                     </Link>

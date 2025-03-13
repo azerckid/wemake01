@@ -5,6 +5,8 @@
 > abstract this component to /app/features/teams/components/team-card.tsx use props for content
 > abstract to /features/community/components/reply.tsx use content as props
 
+> command-p : to search for files
+
 # Welcome to React Router!
 
 A modern, production-ready template for building full-stack React applications using React Router.
