@@ -7,12 +7,13 @@ interface ProductCardProps {
     id: string;
     name: string;
     description: string;
-    commentCount: number;
-    viewCount: number;
     upvoteCount: number;
+    commentsCount: number;
+    viewsCount: number;
+    votesCount: number;
 }
 
-export function ProductCard({ id, name, description, commentCount, viewCount, upvoteCount }: ProductCardProps) {
+export function ProductCard({ id, name, description, upvoteCount, commentsCount, viewsCount, votesCount }: ProductCardProps) {
     return (
         <Link to={`/products/${id}`} className="block">
             <Card className="w-full flex items-center justify-between bg-transparent hover:bg-card/50 transition-all duration-300">
@@ -22,11 +23,11 @@ export function ProductCard({ id, name, description, commentCount, viewCount, up
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-px text-xs text-muted-foreground">
                             <MessageCircleIcon className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-primary">{commentCount}</span> comments
+                            <span className="text-primary">{commentsCount}</span> comments
                         </div>
                         <div className="flex items-center gap-px text-xs text-muted-foreground">
                             <EyeIcon className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-primary">{viewCount}</span> views
+                            <span className="text-primary">{viewsCount}</span> views
                         </div>
                     </div>
                 </CardHeader>
@@ -35,7 +36,7 @@ export function ProductCard({ id, name, description, commentCount, viewCount, up
                 <CardFooter className="py-0">
                     <Button variant="outline" className="w-full flex flex-col h-14">
                         <ChevronUpIcon className="w-4 h-4 shrink-0" />
-                        <span className="text-sm font-medium">{upvoteCount}</span>
+                        <span className="text-sm font-medium">{votesCount}</span>
                     </Button>
                 </CardFooter>
             </Card>
