@@ -7,7 +7,39 @@
 
 > command-p : to search for files
 
+
+# git 명령어
+
+```
+git 전역 사용자 설정
+
+git config --global user.name "zizimoos"
+git config --global user.email "zizimoos@gmail.com"
+
+```
+
+```
+현재 커밋의 작성자 정보 수정
+
+git commit --amend --reset-author
+```
+
+```
+커밋 메시지 수정
+
+git commit --amend -m "#3.42 Profile Pages"
+```
+
+
+```
+이미 github에 push한 커밋의 정보 수정
+
+git commit --amend -m "#3.42 Profile Pages"
+git push --force
+```
+
 # Welcome to React Router!
+
 
 A modern, production-ready template for building full-stack React applications using React Router.
 
