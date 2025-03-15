@@ -30,7 +30,6 @@ git commit --amend --reset-author
 git commit --amend -m "#3.42 Profile Pages"
 ```
 
-
 ```
 이미 github에 push한 커밋의 정보 수정
 
