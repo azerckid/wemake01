@@ -18,7 +18,7 @@ export const meta: MetaFunction = () => {
 
 export default function HomePage() {
     return (
-        <div className="px-20 space-y-40">
+        <div className="space-y-40">
             <div className="grid grid-cols-3 gap-4">
                 <div>
                     <h2 className="text-2xl font-bold leading-tight tracking-tight">Today's Products</h2>
@@ -34,8 +34,9 @@ export default function HomePage() {
                         id={`product-${index}`}
                         name="Product Name"
                         description="Product Description"
-                        commentCount={1000}
-                        viewCount={1000}
+                        commentsCount={1000}
+                        viewsCount={1000}
+                        votesCount={1000}
                         upvoteCount={1000}
                     />
                 ))}
