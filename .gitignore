@@ -6,3 +6,6 @@
 /build/
 .cursorrules
 .cursorignore
+
+# Environment variables
+.env

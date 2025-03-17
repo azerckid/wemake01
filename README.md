@@ -5,11 +5,22 @@
 > abstract this component to /app/features/teams/components/team-card.tsx use props for content
 > abstract to /features/community/components/reply.tsx use content as props
 
-> command-p : to search for files
+# CURSOR COMMAND
+command-p : to search for files
 
+# DRIZZLE SUPABASE INSTALL
+```
+> npm i drizzle-orm postgres --legacy-peer-deps
+> npm i -D drizzle-kit --legacy-peer-deps
+```
+
+# DRIZZLE AFTER CODE SCHEMA.TS
+```
+> npm run db:generate   
+> npm run db:migrate
+```
 
 # git 명령어
-
 ```
 git 전역 사용자 설정
 
