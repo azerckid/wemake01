@@ -22,6 +22,27 @@
       "when": 1742190717926,
       "tag": "0002_same_goliath",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1742271552022,
+      "tag": "0003_worthless_impossible_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1742272173589,
+      "tag": "0004_regular_jane_foster",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1742273009072,
+      "tag": "0005_public_proemial_gods",
+      "breakpoints": true
     }
   ]
 }
