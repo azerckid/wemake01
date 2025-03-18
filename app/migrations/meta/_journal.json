@@ -43,6 +43,13 @@
       "when": 1742273009072,
       "tag": "0005_public_proemial_gods",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1742294432452,
+      "tag": "0006_clumsy_cerebro",
+      "breakpoints": true
     }
   ]
 }
