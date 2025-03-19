@@ -50,6 +50,13 @@
       "when": 1742294432452,
       "tag": "0006_clumsy_cerebro",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1742357493377,
+      "tag": "0007_secret_pretty_boy",
+      "breakpoints": true
     }
   ]
 }
