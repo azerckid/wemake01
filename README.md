@@ -19,6 +19,8 @@ command-p : to search for files
 > npm run db:generate   
 > npm run db:migrate
 ```
+# SUPABASE AI
+Seed the database, create at least 5 rows per table, and use this id for every profile_id cloumn everywhere  'a070a94d-d591-44f3-aea1-f6c45129df38'
 
 # git 명령어
 ```
