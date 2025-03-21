@@ -12,6 +12,7 @@ export const roles = pgEnum("roles", ["developer", "designer", "product-manager"
 export const profiles = pgTable("profiles", {
     profile_id: uuid().primaryKey().references(() => users.id, { onDelete: "cascade" }),
     name: text().notNull(),
+    username: text().notNull(),
     role: roles().default("other").notNull(),
     headline: text(),
     bio: text(),

@@ -5,6 +5,9 @@
 > abstract this component to /app/features/teams/components/team-card.tsx use props for content
 > abstract to /features/community/components/reply.tsx use content as props
 
+> @migrations Use this migration files to get the context you need to generate a seed.sql file to seed each table in the database. For 'profile_id' column this value 'a070a94d-d591-44f3-aea1-f6c45129df38', respect composite primary keys, unique values so on. Create at least 5 rows per table if possible, 1 row per table that contains a composite primary key.
+Do not seed 'profile' use 'a070a94d-d591-44f3-aea1-f6c45129df38' for 'profile_id' everwhere
+
 # CURSOR COMMAND
 command-p : to search for files
 
@@ -20,7 +23,6 @@ command-p : to search for files
 > npm run db:migrate
 ```
 # SUPABASE AI
-Seed the database, create at least 5 rows per table, and use this id for every profile_id cloumn everywhere  'a070a94d-d591-44f3-aea1-f6c45129df38'
 
 # git 명령어
 ```
