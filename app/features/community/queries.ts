@@ -65,6 +65,7 @@ export const getPosts = async () => {
           count
         )
     `);
+  console.log(data);
   if (error) throw new Error(error.message);
   return data;
 };
