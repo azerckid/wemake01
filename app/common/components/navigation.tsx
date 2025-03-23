@@ -152,37 +152,37 @@ export default function Navigation(
                     <NavigationMenuList>
                         {menus.map((menu) => (
                             <NavigationMenuItem key={menu.name} >
-                                {menu.items ?
+                                {menu.items ? (
                                     <>
-                                        <Link to={menu.to}>
-                                            <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
-                                        </Link>
+                                        <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
                                         <NavigationMenuContent >
                                             <ul className="grid grid-cols-2 font-light gap-2 p-6 md:w-[500px] lg:w-[500px] bg-background">
-                                                {menu.items &&
-                                                    menu.items.map((item) => (
-                                                        <li
-                                                            key={item.name}
-                                                            className={cn([
-                                                                "select-none rounded-md transition-colors focus:bg-accent hover:bg-accent",
-                                                                item.to === "/products/promote" && "col-span-2 bg-accent hover:bg-primary/20 focus:bg-primary/20 ",
-                                                                item.to === "/jobs/submit" && "col-span-2 bg-accent hover:bg-primary/20 focus:bg-primary/20"
-                                                            ])}>
-                                                            <NavigationMenuLink asChild>
-                                                                <Link
-                                                                    className="p-2 space-x-1 block leading-none no-underline outline-none "
-                                                                    to={item.to}>
-                                                                    <span className="text-sm font-medium leading-none">{item.name}</span>
-                                                                    <p className="text-sm leading-snug text-muted-foreground">{item.description}</p>
-                                                                </Link>
-                                                            </NavigationMenuLink>
-                                                        </li>
-                                                    ))
-                                                }
+                                                {menu.items.map((item) => (
+                                                    <li
+                                                        key={item.name}
+                                                        className={cn([
+                                                            "select-none rounded-md transition-colors focus:bg-accent hover:bg-accent",
+                                                            item.to === "/products/promote" && "col-span-2 bg-accent hover:bg-primary/20 focus:bg-primary/20 ",
+                                                            item.to === "/jobs/submit" && "col-span-2 bg-accent hover:bg-primary/20 focus:bg-primary/20"
+                                                        ])}>
+                                                        <NavigationMenuLink asChild>
+                                                            <Link
+                                                                className="p-2 space-x-1 block leading-none no-underline outline-none "
+                                                                to={item.to}>
+                                                                <span className="text-sm font-medium leading-none">{item.name}</span>
+                                                                <p className="text-sm leading-snug text-muted-foreground">{item.description}</p>
+                                                            </Link>
+                                                        </NavigationMenuLink>
+                                                    </li>
+                                                ))}
                                             </ul>
                                         </NavigationMenuContent>
-                                    </> : <Link className={navigationMenuTriggerStyle()} to={menu.to}>{menu.name}</Link>}
-
+                                    </>
+                                ) : (
+                                    <NavigationMenuLink asChild>
+                                        <Link className={navigationMenuTriggerStyle()} to={menu.to}>{menu.name}</Link>
+                                    </NavigationMenuLink>
+                                )}
                             </NavigationMenuItem>
                         ))}
                     </NavigationMenuList>

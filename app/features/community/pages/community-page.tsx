@@ -13,7 +13,6 @@ import { PERIOD_OPTIONS, SORT_OPTIONS } from "../constants";
 import { Input } from "~/common/components/ui/input";
 import { PostCard } from "../components/post-card";
 import { getTopics, getPosts } from "../queries";
-import { truncate } from "fs";
 
 export const meta: Route.MetaFunction = () => {
     return [{ title: "Community | wemake" }];
@@ -102,15 +101,15 @@ export default function CommunityPage({ loaderData }: Route.ComponentProps) {
                     <div className="space-y-5">
                         {loaderData.posts.map((post) => (
                             <PostCard
-                                key={post.id}
-                                id={post.id.toString()}
+                                key={post.post_id}
+                                id={post.post_id.toString()}
                                 title={post.title}
-                                author={post.author}
-                                authorAvatarUrl={post.authorAvatarUrl ?? ''}
-                                authorAvatarFallback={post.author.charAt(0)}
-                                category={post.topic}
-                                postedAt={post.createdAt.toLocaleString()}
-                                votesCount={post.upvotes}
+                                author={post.author?.name ?? 'Anonymous'}
+                                authorAvatarUrl={post.author?.avatar_url ?? null}
+                                authorAvatarFallback={post.author?.username ?? 'A'}
+                                category={post.topic?.name ?? 'Uncategorized'}
+                                postedAt={post.created_at}
+                                votesCount={post.upvotes[0]?.count ?? 0}
                                 expanded={true}
                             />
                         ))}
