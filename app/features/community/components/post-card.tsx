@@ -7,28 +7,29 @@ import { cn } from "~/lib/utils";
 import { DateTime } from "luxon";
 
 interface PostCardProps {
-    id: string;
-    title: string;
-    author: string;
+    id: string | null | undefined;
+    title: string | null | undefined;
+    author: string | null | undefined;
     authorAvatarUrl: string | null;
-    authorAvatarFallback: string;
-    category: string;
-    postedAt: string;
+    authorAvatarFallback: string | null | undefined;
+    category: string | null | undefined;
+    postedAt: string | null | undefined;
     expanded?: boolean;
     votesCount?: number;
 }
 
 export function PostCard({
-    id,
-    title,
-    author,
+    id = '',
+    title = 'Untitled',
+    author = 'Anonymous',
     authorAvatarUrl,
-    authorAvatarFallback,
-    category,
-    postedAt,
+    authorAvatarFallback = 'A',
+    category = 'Uncategorized',
+    postedAt = new Date().toISOString(),
     expanded,
-    votesCount = 0, }: PostCardProps) {
-    const formattedDate = DateTime.fromJSDate(new Date(postedAt)).toRelative();
+    votesCount = 0,
+}: PostCardProps) {
+    const formattedDate = postedAt ? DateTime.fromJSDate(new Date(postedAt)).toRelative() : '';
 
     return (
         <Link to={`/community/${id}`} className="block">
