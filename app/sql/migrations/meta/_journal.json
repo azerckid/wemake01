@@ -57,6 +57,13 @@
       "when": 1742357493377,
       "tag": "0007_secret_pretty_boy",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1742791678498,
+      "tag": "0008_tiny_grandmaster",
+      "breakpoints": true
     }
   ]
 }
