@@ -19,10 +19,18 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export const loader = async () => {
-    // const topics = await getTopics();
-    // const posts = await getPosts();
     const [topics, posts] = await Promise.all([getTopics(), getPosts()]);
     return { topics, posts };
+};
+
+export const clientLoader = async ({
+    serverLoader,
+}: Route.ClientLoaderArgs) => {
+    const serverData = await serverLoader();
+    return {
+        topics: serverData.topics,
+        posts: serverData.posts,
+    };
 };
 
 export default function CommunityPage({ loaderData }: Route.ComponentProps) {
@@ -136,4 +144,12 @@ export default function CommunityPage({ loaderData }: Route.ComponentProps) {
             </div>
         </div>
     );
+}
+
+export function HydrateFallback() {
+    return (
+        <div>
+            Loading...
+        </div>
+    )
 }
