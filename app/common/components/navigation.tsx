@@ -154,7 +154,9 @@ export default function Navigation(
                             <NavigationMenuItem key={menu.name} >
                                 {menu.items ? (
                                     <>
-                                        <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
+                                        <Link to={menu.to} prefetch="viewport" className={navigationMenuTriggerStyle()}>
+                                            <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
+                                        </Link>
                                         <NavigationMenuContent >
                                             <ul className="grid grid-cols-2 font-light gap-2 p-6 md:w-[500px] lg:w-[500px] bg-background">
                                                 {menu.items.map((item) => (
@@ -188,87 +190,89 @@ export default function Navigation(
                     </NavigationMenuList>
                 </NavigationMenu>
             </div>
-            {isLoggedIn
-                ?
-                <div className="flex items-center flex-row gap-2">
-                    <Button size="icon" variant="ghost" asChild className="relative hover:bg-transparent">
-                        <Link to="/my/notifications">
-                            <BellIcon className="size-4" />
-                            {hasNotifications && <div className="absolute top-0 right-0 size-2 bg-red-500 rounded-full"></div>}
-                        </Link>
-                    </Button>
-                    <Button size="icon" variant="ghost" asChild className="relative hover:bg-transparent">
-                        <Link to="/my/messages">
-                            <MessageCircleIcon className="size-4" />
-                            {hasMessages && <div className="absolute top-0 right-0 size-2 bg-red-500 rounded-full"></div>}
-                        </Link>
-                    </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Avatar>
-                                <AvatarImage src="https://github.com/azerckid.png" />
-                                <AvatarFallback>U</AvatarFallback>
-                            </Avatar>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-64">
-                            <DropdownMenuLabel className="flex flex-row gap-2">
+            {
+                isLoggedIn
+                    ?
+                    <div className="flex items-center flex-row gap-2">
+                        <Button size="icon" variant="ghost" asChild className="relative hover:bg-transparent">
+                            <Link to="/my/notifications">
+                                <BellIcon className="size-4" />
+                                {hasNotifications && <div className="absolute top-0 right-0 size-2 bg-red-500 rounded-full"></div>}
+                            </Link>
+                        </Button>
+                        <Button size="icon" variant="ghost" asChild className="relative hover:bg-transparent">
+                            <Link to="/my/messages">
+                                <MessageCircleIcon className="size-4" />
+                                {hasMessages && <div className="absolute top-0 right-0 size-2 bg-red-500 rounded-full"></div>}
+                            </Link>
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
                                 <Avatar>
                                     <AvatarImage src="https://github.com/azerckid.png" />
                                     <AvatarFallback>U</AvatarFallback>
                                 </Avatar>
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-medium">azerckid</span>
-                                    <span className="text-sm text-muted-foreground">azerckid@gmail.com</span>
-                                </div>
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
-                                    <Link to="/my/dashboard">
-                                        <LayoutDashboardIcon className="size-4 mr-2" />
-                                        <span>Dashboard</span>
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
-                                    <Link to="/my/profile">
-                                        <UserIcon className="size-4 mr-2" />
-                                        <span>Profile</span>
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
-                                    <Link to="/my/settings">
-                                        <SettingsIcon className="size-4 mr-2" />
-                                        <span>Settings</span>
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
-                                    <Link to="/billing">
-                                        <CreditCardIcon className="size-4 mr-2" />
-                                        <span>Billing</span>
-                                    </Link>
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
-                                    <Link to="/auth/logout">
-                                        <LogOutIcon className="size-4 mr-2" />
-                                        <span>Logout</span>
-                                    </Link>
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-                : (
-                    <div className="flex flex-row gap-2">
-                        <Button asChild variant="secondary">
-                            <Link to="/auth/login">Login</Link>
-                        </Button>
-                        <Button asChild>
-                            <Link to="/auth/join">Join</Link>
-                        </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-64">
+                                <DropdownMenuLabel className="flex flex-row gap-2">
+                                    <Avatar>
+                                        <AvatarImage src="https://github.com/azerckid.png" />
+                                        <AvatarFallback>U</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-medium">azerckid</span>
+                                        <span className="text-sm text-muted-foreground">azerckid@gmail.com</span>
+                                    </div>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                        <Link to="/my/dashboard">
+                                            <LayoutDashboardIcon className="size-4 mr-2" />
+                                            <span>Dashboard</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                        <Link to="/my/profile">
+                                            <UserIcon className="size-4 mr-2" />
+                                            <span>Profile</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                        <Link to="/my/settings">
+                                            <SettingsIcon className="size-4 mr-2" />
+                                            <span>Settings</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                        <Link to="/billing">
+                                            <CreditCardIcon className="size-4 mr-2" />
+                                            <span>Billing</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem asChild className="flex flex-row gap-2 cursor-pointer">
+                                        <Link to="/auth/logout">
+                                            <LogOutIcon className="size-4 mr-2" />
+                                            <span>Logout</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
-                )}
+                    : (
+                        <div className="flex flex-row gap-2">
+                            <Button asChild variant="secondary">
+                                <Link to="/auth/login">Login</Link>
+                            </Button>
+                            <Button asChild>
+                                <Link to="/auth/join">Join</Link>
+                            </Button>
+                        </div>
+                    )
+            }
         </nav >)
 }
