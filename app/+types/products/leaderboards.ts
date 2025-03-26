@@ -3,11 +3,8 @@ import type { MetaFunction as RouterMetaFunction } from "react-router";
 export namespace Route {
     export type MetaFunction = RouterMetaFunction;
     export interface LoaderArgs {
-        params: {
-            year: string;
-            month: string;
-            day: string;
-        };
+        params: Record<string, string>;
+        request: Request;
     }
     export interface ErrorBoundaryProps {
         error: Error;

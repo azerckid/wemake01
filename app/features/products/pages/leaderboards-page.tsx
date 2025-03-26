@@ -1,8 +1,10 @@
-import { Link } from "react-router";
 import type { Route } from "~/+types/products/leaderboards";
+import { Link } from "react-router";
 import { Hero } from "~/common/components/hero";
 import { Button } from "~/common/components/ui/button";
 import { ProductCard } from "../components/product-card";
+import { DateTime } from "luxon";
+import { getProductsByDateRange } from "../queries";
 
 const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;
@@ -15,7 +17,34 @@ export const meta: Route.MetaFunction = () => {
     ];
 };
 
-export default function LeaderboardsPage() {
+export const loader = async () => {
+    const [dailyProducts, weeklyProducts, monthlyProducts, yearlyProducts] =
+        await Promise.all([
+            getProductsByDateRange({
+                startDate: DateTime.now().startOf("day"),
+                endDate: DateTime.now().endOf("day"),
+                limit: 7,
+            }),
+            getProductsByDateRange({
+                startDate: DateTime.now().startOf("week"),
+                endDate: DateTime.now().endOf("week"),
+                limit: 7,
+            }),
+            getProductsByDateRange({
+                startDate: DateTime.now().startOf("month"),
+                endDate: DateTime.now().endOf("month"),
+                limit: 7,
+            }),
+            getProductsByDateRange({
+                startDate: DateTime.now().startOf("year"),
+                endDate: DateTime.now().endOf("year"),
+                limit: 7,
+            }),
+        ]);
+    return { dailyProducts, weeklyProducts, monthlyProducts, yearlyProducts };
+};
+
+export default function LeaderboardPage({ loaderData }: Route.ComponentProps<typeof loader>) {
     return (
         <div className="space-y-20">
             <Hero
@@ -27,15 +56,16 @@ export default function LeaderboardsPage() {
                     <h2 className="text-3xl font-bold leading-tight tracking-tight">Daily Leaderboard</h2>
                     <p className="text-sm text-muted-foreground">the most popular products on wemake by day</p>
                 </div>
-                {Array.from({ length: 7 }).map((_, index) => (
+                {loaderData.dailyProducts.map((product, index) => (
                     <ProductCard
-                        key={index}
-                        id={`product-${index}`}
-                        name="Product Name"
-                        description="Product Description"
-                        commentCount={1000}
-                        viewCount={1000}
-                        upvoteCount={1000}
+                        key={product.product_id}
+                        id={`product-${product.product_id}`}
+                        name={product.name}
+                        description={product.description}
+                        reviewsCount={Number(product.reviews)}
+                        viewsCount={Number(product.views)}
+                        votesCount={Number(product.upvotes)}
+                        upvoteCount={Number(product.upvotes)}
                     />
                 ))}
                 <Button variant="link" asChild className="text-lg self-center">
@@ -47,15 +77,16 @@ export default function LeaderboardsPage() {
                     <h2 className="text-3xl font-bold leading-tight tracking-tight">Weekly Leaderboard</h2>
                     <p className="text-sm text-muted-foreground">the most popular products on wemake by week</p>
                 </div>
-                {Array.from({ length: 7 }).map((_, index) => (
+                {loaderData.weeklyProducts.map((product, index) => (
                     <ProductCard
-                        key={index}
-                        id={`product-${index}`}
-                        name="Product Name"
-                        description="Product Description"
-                        commentCount={1000}
-                        viewCount={1000}
-                        upvoteCount={1000}
+                        key={product.product_id}
+                        id={`product-${product.product_id}`}
+                        name={product.name}
+                        description={product.description}
+                        reviewsCount={Number(product.reviews)}
+                        viewsCount={Number(product.views)}
+                        votesCount={Number(product.upvotes)}
+                        upvoteCount={Number(product.upvotes)}
                     />
                 ))}
                 <Button variant="link" asChild className="text-lg self-center">
@@ -67,15 +98,16 @@ export default function LeaderboardsPage() {
                     <h2 className="text-3xl font-bold leading-tight tracking-tight">Monthly Leaderboard</h2>
                     <p className="text-sm text-muted-foreground">the most popular products on wemake by month</p>
                 </div>
-                {Array.from({ length: 7 }).map((_, index) => (
+                {loaderData.monthlyProducts.map((product, index) => (
                     <ProductCard
-                        key={index}
-                        id={`product-${index}`}
-                        name="Product Name"
-                        description="Product Description"
-                        commentCount={1000}
-                        viewCount={1000}
-                        upvoteCount={1000}
+                        key={product.product_id}
+                        id={`product-${product.product_id}`}
+                        name={product.name}
+                        description={product.description}
+                        reviewsCount={Number(product.reviews)}
+                        viewsCount={Number(product.views)}
+                        votesCount={Number(product.upvotes)}
+                        upvoteCount={Number(product.upvotes)}
                     />
                 ))}
                 <Button variant="link" asChild className="text-lg self-center">
@@ -87,15 +119,16 @@ export default function LeaderboardsPage() {
                     <h2 className="text-3xl font-bold leading-tight tracking-tight">Yearly Leaderboard</h2>
                     <p className="text-sm text-muted-foreground">the most popular products on wemake by year</p>
                 </div>
-                {Array.from({ length: 7 }).map((_, index) => (
+                {loaderData.yearlyProducts.map((product, index) => (
                     <ProductCard
-                        key={index}
-                        id={`product-${index}`}
-                        name="Product Name"
-                        description="Product Description"
-                        commentCount={1000}
-                        viewCount={1000}
-                        upvoteCount={1000}
+                        key={product.product_id}
+                        id={`product-${product.product_id}`}
+                        name={product.name}
+                        description={product.description}
+                        reviewsCount={Number(product.reviews)}
+                        viewsCount={Number(product.views)}
+                        votesCount={Number(product.upvotes)}
+                        upvoteCount={Number(product.upvotes)}
                     />
                 ))}
                 <Button variant="link" asChild className="text-lg self-center">

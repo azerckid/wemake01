@@ -1,19 +1,35 @@
-import { DateTime } from "luxon";
-import { data, isRouteErrorResponse } from "react-router";
 import type { Route } from "~/+types/products/leaderboards";
+import { Link } from "react-router";
+import { data, isRouteErrorResponse } from "react-router";
+import { DateTime } from "luxon";
 import { date, z } from "zod";
 import { Hero } from "~/common/components/hero";
 import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
-import { Link } from "react-router";
 import ProductPagination from "~/common/components/product-pagination";
+import { getProductPagesByDateRange, getProductsByDateRange } from "../queries";
+import { PAGE_SIZE } from "../contants";
+
 const paramSchema = z.object({
     year: z.coerce.number(),
     month: z.coerce.number(),
     day: z.coerce.number()
 });
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
+export const meta: Route.MetaFunction = ({ params, data }) => {
+    const urlDate = DateTime.fromObject({
+        year: Number(params.year),
+        month: Number(params.month),
+        day: Number(params.day)
+    }).setZone("Asia/Seoul").setLocale("ko");
+    console.log(data);
+
+    return [
+        { title: `best of ${urlDate.toLocaleString(DateTime.DATE_MED)}` },
+    ];
+};
+
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
     const { success, data: parsedData } = paramSchema.safeParse(params);
     if (!success) {
         throw data(
@@ -55,8 +71,21 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
             { status: 400 }
         );
     }
+    const url = new URL(request.url);
+    const products = await getProductsByDateRange({
+        startDate: date.startOf("day"),
+        endDate: date.endOf("day"),
+        limit: PAGE_SIZE,
+        page: Number(url.searchParams.get("page") || 1),
+    });
+    const totalPages = await getProductPagesByDateRange({
+        startDate: date.startOf("day"),
+        endDate: date.endOf("day"),
+    });
     return {
         ...parsedData,
+        products,
+        totalPages
     };
 };
 
@@ -92,19 +121,20 @@ export default function DailyLeaderboardsPage({ loaderData }: Route.ComponentPro
                 ) : null}
             </div>
             <div className="space-y-4 w-full max-w-screen-md mx-auto grid">
-                {Array.from({ length: 10 }).map((_, index) => (
+                {loaderData.products.map((product, index) => (
                     <ProductCard
-                        key={index}
-                        id={`product-${index}`}
-                        name="Product Name"
-                        description="Product Description"
-                        commentCount={1000}
-                        viewCount={1000}
-                        upvoteCount={1000}
+                        key={product.product_id}
+                        id={`product-${product.product_id}`}
+                        name={product.name}
+                        description={product.description}
+                        reviewsCount={Number(product.reviews)}
+                        viewsCount={Number(product.views)}
+                        votesCount={Number(product.upvotes)}
+                        upvoteCount={Number(product.upvotes)}
                     />
                 ))}
             </div>
-            <ProductPagination totalPages={10} />
+            <ProductPagination totalPages={loaderData.totalPages} />
         </div>
     );
 }
@@ -123,15 +153,3 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     return <div>Unknown error</div>;
 }
 
-export const meta: Route.MetaFunction = ({ params, data }) => {
-    const urlDate = DateTime.fromObject({
-        year: Number(params.year),
-        month: Number(params.month),
-        day: Number(params.day)
-    }).setZone("Asia/Seoul").setLocale("ko");
-    console.log(data);
-
-    return [
-        { title: `best of ${urlDate.toLocaleString(DateTime.DATE_MED)}` },
-    ];
-}; 

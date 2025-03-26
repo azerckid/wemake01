@@ -8,12 +8,12 @@ interface ProductCardProps {
     name: string;
     description: string;
     upvoteCount: number;
-    commentsCount: number;
+    reviewsCount: number;
     viewsCount: number;
     votesCount: number;
 }
 
-export function ProductCard({ id, name, description, upvoteCount, commentsCount, viewsCount, votesCount }: ProductCardProps) {
+export function ProductCard({ id, name, description, upvoteCount, reviewsCount, viewsCount, votesCount }: ProductCardProps) {
     return (
         <Link to={`/products/${id}`} className="block">
             <Card className="w-full flex items-center justify-between bg-transparent hover:bg-card/50 transition-all duration-300">
@@ -23,7 +23,7 @@ export function ProductCard({ id, name, description, upvoteCount, commentsCount,
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-px text-xs text-muted-foreground">
                             <MessageCircleIcon className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-primary">{commentsCount}</span> comments
+                            <span className="text-primary">{reviewsCount}</span> reviews
                         </div>
                         <div className="flex items-center gap-px text-xs text-muted-foreground">
                             <EyeIcon className="w-4 h-4 text-muted-foreground" />

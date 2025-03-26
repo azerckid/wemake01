@@ -1,11 +1,14 @@
 import type { MetaFunction } from "react-router";
-import { ProductCard } from "~/features/products/components/product-card";
-import { Button } from "../components/ui/button";
+import type { Route } from "./+types/home-page";
 import { Link } from "react-router";
+import { DateTime } from "luxon";
+import { Button } from "../components/ui/button";
+import { ProductCard } from "~/features/products/components/product-card";
 import { PostCard } from "~/features/community/components/post-card";
 import { IdeaCard } from "~/features/ideas/components/idea-card";
 import { JobCard } from "~/features/jobs/components/job-card";
 import { TeamCard } from "~/features/teams/components/team-card";
+import { getProductsByDateRange } from "~/features/products/queries";
 
 export const meta: MetaFunction = () => {
     return [
@@ -14,9 +17,16 @@ export const meta: MetaFunction = () => {
     ]
 }
 
+export const loader = async () => {
+    const products = await getProductsByDateRange({
+        startDate: DateTime.now().startOf("day"),
+        endDate: DateTime.now().endOf("day"),
+        limit: 7,
+    });
+    return { products };
+};
 
-
-export default function HomePage() {
+export default function HomePage({ loaderData }: Route.ComponentProps) {
     return (
         <div className="space-y-40">
             <div className="grid grid-cols-3 gap-4">
@@ -28,20 +38,19 @@ export default function HomePage() {
                     </Button>
                 </div>
 
-                {Array.from({ length: 10 }).map((_, index) => (
+                {loaderData.products.map((product, _) => (
                     <ProductCard
-                        key={index}
-                        id={`product-${index}`}
-                        name="Product Name"
-                        description="Product Description"
-                        commentsCount={1000}
-                        viewsCount={1000}
-                        votesCount={1000}
-                        upvoteCount={1000}
+                        key={product.product_id}
+                        id={`product-${product.product_id}`}
+                        name={product.name}
+                        description={product.description}
+                        reviewsCount={Number(product.reviews)}
+                        viewsCount={Number(product.views)}
+                        votesCount={Number(product.upvotes)}
+                        upvoteCount={Number(product.upvotes)}
                     />
                 ))}
             </div>
-
             <div className="grid grid-cols-3 gap-4">
                 <div>
                     <h2 className="text-2xl font-bold leading-tight tracking-tight">Latest Discussions</h2>
