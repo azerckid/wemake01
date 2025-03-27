@@ -4,6 +4,7 @@ CREATE VIEW community_post_list_view AS
    posts.title,
    posts.created_at,
    topics.name AS topic,
+   topics.slug AS topic_slug,
    profiles.name AS author,
    profiles.avatar_url AS authorAvatarUrl,
    profiles.username AS author_username,
@@ -12,4 +13,4 @@ CREATE VIEW community_post_list_view AS
  INNER JOIN topics USING (topic_id)
  INNER JOIN profiles USING (profile_id)
  LEFT JOIN post_upvotes USING (post_id)
- GROUP BY posts.post_id, topics.name, profiles.name, profiles.avatar_url, profiles.username;
+ GROUP BY posts.post_id, topics.name, topics.slug, profiles.name, profiles.avatar_url, profiles.username;
