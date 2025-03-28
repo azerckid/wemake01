@@ -10,6 +10,7 @@ import { JobCard } from "~/features/jobs/components/job-card";
 import { TeamCard } from "~/features/teams/components/team-card";
 import { getProductsByDateRange } from "~/features/products/queries";
 import { getPosts } from "~/features/community/queries";
+import { getGptIdeas } from "~/features/ideas/queries";
 
 export const meta: MetaFunction = () => {
     return [
@@ -28,7 +29,8 @@ export const loader = async () => {
         limit: 7,
         sorting: "newest",
     });
-    return { products, posts };
+    const ideas = await getGptIdeas({ limit: 7 });
+    return { products, posts, ideas };
 };
 
 export default function HomePage({ loaderData }: Route.ComponentProps) {
@@ -85,15 +87,15 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
                         <Link to="/ideas" className="text-red-500">Explore all ideas &rarr;</Link>
                     </Button>
                 </div>
-                {Array.from({ length: 11 }).map((_, index) => (
+                {loaderData.ideas.map((idea) => (
                     <IdeaCard
-                        key={index}
-                        id={`ideaId-${index}`}
-                        title="A startup that create an AI-powered generated personal trainer, delivering customized fitness recommendations and tracking of progress using a mobile app to track workouts and progress as well as website to manage the business."
-                        viewCount={100}
-                        postedAt="12 hours ago"
-                        likeCount={100}
-                        claimed={index % 2 === 0}
+                        key={idea.gpt_idea_id}
+                        id={Number(idea.gpt_idea_id)}
+                        title={idea.idea ?? ""}
+                        viewCount={Number(idea.views)}
+                        postedAt={idea.created_at ?? ""}
+                        likeCount={Number(idea.likes)}
+                        claimed={idea.is_claimed ?? false}
                     />
                 ))}
             </div>
