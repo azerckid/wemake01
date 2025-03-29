@@ -2,9 +2,10 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "~/common/c
 import { Link } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import { Badge } from "~/common/components/ui/badge";
+import { DateTime } from "luxon";
 
 interface JobCardProps {
-    id: string;
+    id: number;
     company: string;
     companyLogoUrl: string;
     companyHQ: string;
@@ -25,17 +26,23 @@ export function JobCard({ id, company, companyLogoUrl, companyHQ, title, postedA
             <Card className="bg-transparent hover:bg-card/50 transition-all duration-300">
                 <CardHeader>
                     <div className="flex items-center gap-2 mb-4">
-                        <img src={companyLogoUrl} alt={company} className="size-10 rounded-full" />
+                        <img src={companyLogoUrl} alt={`${company} logo`} className="size-10 rounded-full" />
                         <div className="space-x-2">
                             <span className="text-sm text-accent-foreground">{company}</span>
-                            <span className="text-xs text-muted-foreground">{postedAt}</span>
+                            <span className="text-xs text-muted-foreground">
+                                {DateTime.fromISO(postedAt).toRelative()}
+                            </span>
                         </div>
                     </div>
                     <CardTitle>{title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Badge variant="outline">{type}</Badge>
-                    {isRemote && <Badge variant="outline">Remote</Badge>}
+                    <Badge variant="outline" className="capitalize">
+                        {type}
+                    </Badge>
+                    <Badge variant="outline" className="capitalize">
+                        {isRemote ? "Remote" : "On-site"}
+                    </Badge>
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
                     <div className="flex flex-col items-start">

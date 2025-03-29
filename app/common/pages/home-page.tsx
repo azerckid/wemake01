@@ -11,6 +11,7 @@ import { TeamCard } from "~/features/teams/components/team-card";
 import { getProductsByDateRange } from "~/features/products/queries";
 import { getPosts } from "~/features/community/queries";
 import { getGptIdeas } from "~/features/ideas/queries";
+import { getJobs } from "~/features/jobs/queries";
 
 export const meta: MetaFunction = () => {
     return [
@@ -30,7 +31,8 @@ export const loader = async () => {
         sorting: "newest",
     });
     const ideas = await getGptIdeas({ limit: 7 });
-    return { products, posts, ideas };
+    const jobs = await getJobs({ limit: 11 });
+    return { products, posts, ideas, jobs };
 };
 
 export default function HomePage({ loaderData }: Route.ComponentProps) {
@@ -107,22 +109,18 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
                         <Link to="/jobs" className="text-red-500">Explore all jobs &rarr;</Link>
                     </Button>
                 </div>
-                {Array.from({ length: 11 }).map((_, index) => (
+                {loaderData.jobs.map((job) => (
                     <JobCard
-                        key={index}
-                        id="jobId"
-                        company="Tesla"
-                        companyHQ="San Francisco, CA"
-                        companyLogoUrl="https://github.com/facebook.png"
-                        title="Software Engineer"
-                        postedAt="12 hours ago"
-                        type="Full-time"
-                        isRemote={true}
-                        salary={{
-                            min: 100000,
-                            max: 120000,
-                            currency: "$"
-                        }}
+                        key={job.job_id}
+                        id={job.job_id}
+                        company={job.company_name}
+                        companyLogoUrl={job.company_logo_url ? "https://github.com/apple.png" : "https://github.com/apple.png"}
+                        companyHQ={job.company_location}
+                        title={job.title}
+                        postedAt={job.created_at}
+                        type={job.job_type}
+                        isRemote={job.location_type === "remote"}
+                        salary={{ min: 0, max: 0, currency: "USD" }}
                     />
                 ))}
             </div>
