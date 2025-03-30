@@ -12,6 +12,7 @@ import { getProductsByDateRange } from "~/features/products/queries";
 import { getPosts } from "~/features/community/queries";
 import { getGptIdeas } from "~/features/ideas/queries";
 import { getJobs } from "~/features/jobs/queries";
+import { getTeams } from "~/features/teams/queries";
 
 export const meta: MetaFunction = () => {
     return [
@@ -32,7 +33,8 @@ export const loader = async () => {
     });
     const ideas = await getGptIdeas({ limit: 7 });
     const jobs = await getJobs({ limit: 11 });
-    return { products, posts, ideas, jobs };
+    const teams = await getTeams({ limit: 11 });
+    return { products, posts, ideas, jobs, teams };
 };
 
 export default function HomePage({ loaderData }: Route.ComponentProps) {
@@ -132,17 +134,14 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
                         <Link to="/teams" className="text-red-500">Explore all teams &rarr;</Link>
                     </Button>
                 </div>
-                {Array.from({ length: 11 }).map((_, index) => (
+                {loaderData.teams.map((team) => (
                     <TeamCard
-                        key={index}
-                        id="teamId"
-                        leaderUsername="zizimoos"
-                        leaderAvatarUrl="https://github.com/zizimoos.png"
-                        positions={[
-                            "React developer",
-                            "Backend developer",
-                        ]}
-                        projectDescription="AI-powered personal project"
+                        key={team.team_id}
+                        id={Number(team.team_id)}
+                        leaderUsername={team.team_leader.username}
+                        leaderAvatarUrl={team.team_leader.avatar_url ?? "https://github.com/github.png"}
+                        positions={team.roles.split(",")}
+                        projectDescription={team.product_description}
                     />
                 ))}
             </div>
