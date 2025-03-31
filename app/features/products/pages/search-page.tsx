@@ -1,6 +1,5 @@
 import type { Route } from "~/+types/products/search";
 import { z } from "zod";
-import { json } from "node:stream/consumers";
 import { Hero } from "~/common/components/hero";
 import { ProductCard } from "../components/product-card";
 import ProductPagination from "~/common/components/product-pagination";
@@ -8,6 +7,13 @@ import { Button } from "~/common/components/ui/button";
 import { Input } from "~/common/components/ui/input";
 import { Form, FormField } from "~/common/components/ui/form";
 import { useForm } from "react-hook-form";
+
+export const meta: Route.MetaFunction = () => {
+    return [
+        { title: "Search | Products | wemake" },
+        { name: "description", content: "Search for products and makers" }
+    ];
+};
 
 const paramSchema = z.object({
     query: z.string().optional().default(""),
@@ -41,7 +47,16 @@ export default function SearchPage() {
             </Form>
             <div className="space-y-4 w-full max-w-screen-md mx-auto">
                 {Array.from({ length: 10 }).map((_, index) => (
-                    <ProductCard key={index} id={`product-${index}`} name="Product Name" description="Search result product" commentCount={1000} viewCount={1000} upvoteCount={1000} />
+                    <ProductCard
+                        key={index}
+                        id={`product-${index}`}
+                        name="Product Name"
+                        description="Search result product"
+                        reviewsCount={1000}
+                        viewsCount={1000}
+                        votesCount={1000}
+                        upvoteCount={1000}
+                    />
                 ))}
             </div>
             <ProductPagination totalPages={10} />
@@ -49,9 +64,3 @@ export default function SearchPage() {
     );
 }
 
-export const meta: Route.MetaFunction = () => {
-    return [
-        { title: "Search | Products | wemake" },
-        { name: "description", content: "Search for products and makers" }
-    ];
-}; 

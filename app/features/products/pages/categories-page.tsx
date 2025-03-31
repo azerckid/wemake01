@@ -1,37 +1,33 @@
-import type { Route } from "~/+types/products/categories";
 import { Hero } from "~/common/components/hero";
 import { CategoryCard } from "../components/category-card";
+import type { Route } from "./+types/categories-page";
+import { getCategories } from "../queries";
 
-// const categories = [
-//     { id: "ai", name: "AI & ML", productCount: 150 },
-//     { id: "productivity", name: "Productivity", productCount: 89 },
-//     { id: "developer-tools", name: "Developer Tools", productCount: 234 },
-//     { id: "design", name: "Design", productCount: 167 },
-//     { id: "marketing", name: "Marketing", productCount: 123 },
-// ];
+export const meta: Route.MetaFunction = () => [
+    { title: "Categories | ProductHunt Clone" },
+    { name: "description", content: "Browse products by category" },
+];
 
-export default function CategoriesPage() {
+export const loader = async () => {
+    const categories = await getCategories();
+    return { categories };
+};
+
+export default function CategoriesPage({ loaderData }: Route.ComponentProps) {
     return (
         <div className="space-y-10">
             <Hero title="Categories" description="Browse products by category" />
             <div className="grid grid-cols-4 gap-10">
-                {Array.from({ length: 10 }).map((_, index) => (
+                {(loaderData?.categories ?? []).map((category) => (
                     <CategoryCard
-                        key={index}
-                        id={`category-${index}`}
-                        name={`Category ${index}`}
-                        productCount={100}
-                        description={`Category ${index} description`}
+                        key={`categoryId-${category.category_id}`}
+                        id={`${category.category_id}`}
+                        name={category.name}
+                        description={category.description}
+                        productCount={category.product_count}
                     />
                 ))}
             </div>
         </div>
     );
 }
-
-export const meta: Route.MetaFunction = () => {
-    return [
-        { title: "Categories | Products | wemake" },
-        { name: "description", content: "Browse products by category" }
-    ];
-}; 

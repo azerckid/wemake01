@@ -26,7 +26,7 @@ import { BellIcon, CreditCardIcon, LogOutIcon, MessageCircleIcon, SettingsIcon, 
 const menus = [
     {
         name: "Products",
-        to: "/products",
+        to: "/products/leaderboards",
         items: [
             {
                 name: "Leaderboards",
