@@ -107,7 +107,7 @@ export default function YearlyLeaderboardsPage({ loaderData }: Route.ComponentPr
                         key={product.product_id}
                         id={`product-${product.product_id}`}
                         name={product.name}
-                        description={product.description}
+                        description={product.tagline}
                         reviewsCount={Number(product.reviews)}
                         viewsCount={Number(product.views)}
                         votesCount={Number(product.upvotes)}

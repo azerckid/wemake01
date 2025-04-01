@@ -61,7 +61,7 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps<typ
                         key={product.product_id}
                         id={`product-${product.product_id}`}
                         name={product.name}
-                        description={product.description}
+                        description={product.tagline}
                         reviewsCount={Number(product.reviews)}
                         viewsCount={Number(product.views)}
                         votesCount={Number(product.upvotes)}
@@ -82,7 +82,7 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps<typ
                         key={product.product_id}
                         id={`product-${product.product_id}`}
                         name={product.name}
-                        description={product.description}
+                        description={product.tagline}
                         reviewsCount={Number(product.reviews)}
                         viewsCount={Number(product.views)}
                         votesCount={Number(product.upvotes)}
@@ -103,7 +103,7 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps<typ
                         key={product.product_id}
                         id={`product-${product.product_id}`}
                         name={product.name}
-                        description={product.description}
+                        description={product.tagline}
                         reviewsCount={Number(product.reviews)}
                         viewsCount={Number(product.views)}
                         votesCount={Number(product.upvotes)}
@@ -124,7 +124,7 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps<typ
                         key={product.product_id}
                         id={`product-${product.product_id}`}
                         name={product.name}
-                        description={product.description}
+                        description={product.tagline}
                         reviewsCount={Number(product.reviews)}
                         viewsCount={Number(product.views)}
                         votesCount={Number(product.upvotes)}

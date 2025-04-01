@@ -1,12 +1,12 @@
-import type { Route } from "~/+types/products/search";
+import type { Route } from "./+types/search-page";
+import { Form } from "react-router";
 import { z } from "zod";
 import { Hero } from "~/common/components/hero";
 import { ProductCard } from "../components/product-card";
 import ProductPagination from "~/common/components/product-pagination";
 import { Button } from "~/common/components/ui/button";
 import { Input } from "~/common/components/ui/input";
-import { Form, FormField } from "~/common/components/ui/form";
-import { useForm } from "react-hook-form";
+import { getProductsBySearch, getPagesBySearch } from "../queries";
 
 export const meta: Route.MetaFunction = () => {
     return [
@@ -15,52 +15,62 @@ export const meta: Route.MetaFunction = () => {
     ];
 };
 
-const paramSchema = z.object({
+const searchParams = z.object({
     query: z.string().optional().default(""),
     page: z.coerce.number().optional().default(1)
 });
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
     const url = new URL(request.url);
-    const { success, data: parsedData } = paramSchema.safeParse({
+    const { success, data: parsedData } = searchParams.safeParse({
         ...Object.fromEntries(url.searchParams)
     });
 
     if (!success) {
         throw new Error("Invalid search parameters");
     }
-    console.log(parsedData);
+    if (parsedData.query === "") {
+        return { products: [], totalPages: 1 };
+    }
+    const products = await getProductsBySearch({
+        query: parsedData.query,
+        page: parsedData.page,
+    });
+    const totalPages = await getPagesBySearch({ query: parsedData.query });
+    return { products, totalPages };
 };
 
 
-export default function SearchPage() {
-    const form = useForm();
-
+export default function SearchPage({ loaderData }: Route.ComponentProps) {
     return (
         <div className="space-y-10">
-            <Hero title="Search" description="Search for products and makers" />
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit((data) => console.log(data))} className="flex gap-2 max-w-screen-md mx-auto">
-                    <Input name="query" placeholder="Search for products and makers" />
-                    <Button type="submit">Search</Button>
-                </form>
+            <Hero
+                title="Search"
+                description="Search for products by title or description"
+            />
+            <Form className="flex justify-center h-14 max-w-screen-sm items-center gap-2 mx-auto">
+                <Input
+                    name="query"
+                    placeholder="Search for products"
+                    className="text-lg"
+                />
+                <Button type="submit">Search</Button>
             </Form>
-            <div className="space-y-4 w-full max-w-screen-md mx-auto">
-                {Array.from({ length: 10 }).map((_, index) => (
+            <div className="space-y-5 w-full max-w-screen-md mx-auto">
+                {loaderData.products.map((product) => (
                     <ProductCard
-                        key={index}
-                        id={`product-${index}`}
-                        name="Product Name"
-                        description="Search result product"
-                        reviewsCount={1000}
-                        viewsCount={1000}
-                        votesCount={1000}
-                        upvoteCount={1000}
+                        key={product.product_id}
+                        id={product.product_id}
+                        name={product.name}
+                        description={product.tagline}
+                        reviewsCount={Number(product.reviews)}
+                        viewsCount={Number(product.views)}
+                        votesCount={Number(product.upvotes)}
+                        upvoteCount={Number(product.upvotes)}
                     />
                 ))}
             </div>
-            <ProductPagination totalPages={10} />
+            <ProductPagination totalPages={loaderData.totalPages} />
         </div>
     );
 }
-
