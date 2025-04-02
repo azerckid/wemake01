@@ -51,7 +51,7 @@ export default function CategoryPage({ loaderData }: Route.ComponentProps) {
                 {(loaderData?.products ?? []).map((product) => (
                     <ProductCard
                         key={product.product_id}
-                        id={`product-${product.product_id}`}
+                        id={product.product_id}
                         name={product.name}
                         description={product.tagline}
                         reviewsCount={Number(product.reviews)}
