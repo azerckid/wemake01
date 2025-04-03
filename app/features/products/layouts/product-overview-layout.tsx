@@ -71,7 +71,8 @@ export default function ProductOverviewLayout({ loaderData }: Route.ComponentPro
             <Outlet context={{
                 productId: product.product_id,
                 description: product.description,
-                how_it_works: product.how_it_works
+                how_it_works: product.how_it_works,
+                review_count: product.reviews,
             }} />
         </div>
     );
