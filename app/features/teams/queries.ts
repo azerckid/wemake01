@@ -22,3 +22,23 @@ export const getTeams = async ({ limit }: { limit: number }) => {
 
     return data;
 };
+
+export const getTeamById = async (teamId: string) => {
+    const { data, error } = await client
+        .from("teams")
+        .select(
+            `
+        *,
+        team_leader:profiles!inner(
+          username,
+          avatar_url,
+          role,
+          name
+        )
+        `
+        )
+        .eq("team_id", parseInt(teamId))
+        .single();
+    if (error) throw error;
+    return data;
+};

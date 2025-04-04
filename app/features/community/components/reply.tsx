@@ -11,9 +11,9 @@ import { Textarea } from "~/common/components/ui/textarea";
 
 interface ReplyProps {
     username: string;
-    avatarUrl: string;
+    avatarUrl: string | null;
     content: string;
-    timestamp: string;
+    timestamp: string | null;
     topLevel: boolean;
 }
 
@@ -31,7 +31,7 @@ export function Reply({
             <div className="flex items-start gap-5 w-2/3">
                 <Avatar className="size-14">
                     <AvatarFallback>{username[0]}</AvatarFallback>
-                    <AvatarImage src={avatarUrl} />
+                    <AvatarImage src={avatarUrl || undefined} />
                 </Avatar>
                 <div className="flex flex-col gap-2 items-start">
                     <div className="flex gap-2 items-center">
@@ -39,7 +39,7 @@ export function Reply({
                             <h4 className="font-medium">{username}</h4>
                         </Link>
                         <DotIcon className="size-5" />
-                        <span className="text-xs text-muted-foreground">{timestamp}</span>
+                        <span className="text-xs text-muted-foreground">{timestamp || 'Unknown time'}</span>
                     </div>
                     <p className="text-muted-foreground">{content}</p>
                     <Button variant="ghost" className="self-end" onClick={toggleReplying}>
