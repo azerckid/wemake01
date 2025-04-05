@@ -17,7 +17,7 @@ import {
 } from "~/common/components/ui/avatar";
 import { Badge } from "~/common/components/ui/badge";
 import { Reply } from "~/features/community/components/reply";
-import { getPostById } from "../queries";
+import { getPostById, getReplies } from "../queries";
 import { DateTime } from "luxon";
 
 export const meta: Route.MetaFunction = ({ params }) => {
@@ -26,7 +26,8 @@ export const meta: Route.MetaFunction = ({ params }) => {
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
     const post = await getPostById(params.postId);
-    return { post };
+    const replies = await getReplies(params.postId);
+    return { post, replies };
 };
 
 export default function PostPage({ loaderData }: Route.ComponentProps) {
@@ -97,13 +98,17 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
                     <div className="space-y-10">
                         <h4 className="font-semibold">{loaderData.post.replies} Replies</h4>
                         <div className="flex flex-col gap-5">
-                            <Reply
-                                username={loaderData.post.author_username}
-                                avatarUrl={loaderData.post.author_avatar_url}
-                                content={loaderData.post.content}
-                                timestamp={DateTime.fromISO(loaderData.post.created_at).toRelative()}
-                                topLevel
-                            />
+                            {loaderData.replies.map((reply) => (
+                                <Reply
+                                    key={reply.post_reply_id}
+                                    username={reply.user.name}
+                                    avatarUrl={reply.user.avatar_url}
+                                    content={reply.reply}
+                                    timestamp={reply.created_at}
+                                    topLevel={true}
+                                    replies={reply.post_replies}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

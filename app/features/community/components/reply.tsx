@@ -8,6 +8,7 @@ import {
 } from "~/common/components/ui/avatar";
 import { useState } from "react";
 import { Textarea } from "~/common/components/ui/textarea";
+import { DateTime } from "luxon";
 
 interface ReplyProps {
     username: string;
@@ -15,6 +16,16 @@ interface ReplyProps {
     content: string;
     timestamp: string | null;
     topLevel: boolean;
+    replies?: {
+        post_reply_id: number;
+        reply: string;
+        created_at: string;
+        user: {
+            name: string;
+            avatar_url: string | null;
+            username: string;
+        };
+    }[];
 }
 
 export function Reply({
@@ -23,23 +34,26 @@ export function Reply({
     content,
     timestamp,
     topLevel,
+    replies,
 }: ReplyProps) {
     const [replying, setReplying] = useState(false);
     const toggleReplying = () => setReplying((prev) => !prev);
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full">
             <div className="flex items-start gap-5 w-2/3">
                 <Avatar className="size-14">
                     <AvatarFallback>{username[0]}</AvatarFallback>
-                    <AvatarImage src={avatarUrl || undefined} />
+                    {avatarUrl ? <AvatarImage src={avatarUrl} /> : null}
                 </Avatar>
-                <div className="flex flex-col gap-2 items-start">
+                <div className="flex flex-col gap-2 items-start w-full">
                     <div className="flex gap-2 items-center">
                         <Link to={`/users/${username}`}>
                             <h4 className="font-medium">{username}</h4>
                         </Link>
                         <DotIcon className="size-5" />
-                        <span className="text-xs text-muted-foreground">{timestamp || 'Unknown time'}</span>
+                        <span className="text-xs text-muted-foreground">
+                            {timestamp ? DateTime.fromISO(timestamp).toRelative() : 'Unknown time'}
+                        </span>
                     </div>
                     <p className="text-muted-foreground">{content}</p>
                     <Button variant="ghost" className="self-end" onClick={toggleReplying}>
@@ -64,15 +78,17 @@ export function Reply({
                     </div>
                 </Form>
             )}
-            {topLevel && (
+            {topLevel && replies && (
                 <div className="pl-20 w-full">
-                    <Reply
-                        username="Zizimoos"
-                        avatarUrl="https://github.com/zizimoos.png"
-                        content="I've been using Todoist for a while now, and it's really great. It's simple, easy to use, and has a lot of features."
-                        timestamp="12 hours ago"
-                        topLevel={false}
-                    />
+                    {replies.map((reply) => (
+                        <Reply
+                            username={reply.user.username}
+                            avatarUrl={reply.user.avatar_url}
+                            content={reply.reply}
+                            timestamp={reply.created_at}
+                            topLevel={false}
+                        />
+                    ))}
                 </div>
             )}
         </div>
