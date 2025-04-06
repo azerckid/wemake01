@@ -14,6 +14,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ id, name, description, upvoteCount, reviewsCount, viewsCount, votesCount }: ProductCardProps) {
+    console.log(id);
     return (
         <Link to={`/products/${id}`} className="block">
             <Card className="w-full flex items-center justify-between bg-transparent hover:bg-card/50 transition-all duration-300">

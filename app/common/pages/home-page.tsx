@@ -48,11 +48,10 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
                         <Link to="/products/leaderboards">Explore all products &rarr;</Link>
                     </Button>
                 </div>
-
                 {loaderData.products.map((product, _) => (
                     <ProductCard
                         key={product.product_id}
-                        id={`product-${product.product_id}`}
+                        id={Number(product.product_id)}
                         name={product.name}
                         description={product.tagline}
                         reviewsCount={Number(product.reviews)}
@@ -73,7 +72,7 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
                 {loaderData.posts.map((post) => (
                     <PostCard
                         key={post.post_id}
-                        id={`postId-${post.post_id}`}
+                        id={String(post.post_id)}
                         title={post.title}
                         author={post.author}
                         authorAvatarUrl={post.authoravatarurl}

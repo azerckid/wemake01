@@ -19,6 +19,10 @@ import { Textarea } from "~/common/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { getUserProfile } from "../queries";
 
+export const meta: Route.MetaFunction = ({ data }) => {
+    return [{ title: `${data.user.username} | wemake` }];
+};
+
 export const loader = async ({
     params,
 }: Route.LoaderArgs & { params: { username: string } }) => {
