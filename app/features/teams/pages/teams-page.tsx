@@ -2,11 +2,13 @@ import { Hero } from "~/common/components/hero";
 import type { Route } from "./+types/teams-page";
 import { TeamCard } from "../components/team-card";
 import { getTeams } from "../queries";
+import { makeSSRClient } from "~/supa-client";
 
 export const meta: Route.MetaFunction = () => [{ title: "Teams | wemake" }];
 
-export const loader = async () => {
-    const teams = await getTeams({ limit: 8 });
+export const loader = async ({ request }: Route.LoaderArgs) => {
+    const { client, headers } = makeSSRClient(request);
+    const teams = await getTeams(client, { limit: 8 });
     return { teams };
 };
 
@@ -17,7 +19,7 @@ export default function TeamsPage({ loaderData }: Route.ComponentProps) {
             <div className="grid grid-cols-4 gap-4">
                 {loaderData.teams.map((team) => (
                     <TeamCard
-                        key={`teamId-${team.team_id}`}
+                        key={Number(team.team_id)}
                         id={Number(team.team_id)}
                         leaderUsername={team.team_leader.username}
                         leaderAvatarUrl={team.team_leader.avatar_url ?? "https://github.com/github.png"}

@@ -1,11 +1,12 @@
 import { Button } from "~/common/components/ui/button";
+import { makeSSRClient } from "~/supa-client";
 import { JobCard } from "../components/job-card";
 import type { Route } from "./+types/jobs-page";
 import { Hero } from "~/common/components/hero";
 import { JOB_TYPES, LOCATION_TYPES, SALARY_RANGES } from "../constants";
 import { Link, useSearchParams, data } from "react-router";
 import { cn } from "~/lib/utils";
-import { getJobs } from "../queries";
+import { getJobs, getJobById } from "../queries";
 import { z } from "zod";
 
 export const meta: Route.MetaFunction = () => {
@@ -26,8 +27,9 @@ const searchParamsSchema = z.object({
         .optional(),
 });
 
-export const loader = async ({ request }: Route.LoaderArgs) => {
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
     const url = new URL(request.url);
+    const { client, headers } = makeSSRClient(request);
     const { success, data: parsedData } = searchParamsSchema.safeParse(
         Object.fromEntries(url.searchParams)
     );
@@ -40,13 +42,14 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
             { status: 400 }
         );
     }
-    const jobs = await getJobs({
+    const jobs = await getJobs(client, {
         limit: 40,
         location: parsedData.location,
         type: parsedData.type,
         salary: parsedData.salary,
     });
-    return { jobs };
+    const job = await getJobById(client, { jobId: params.jobId ? parseInt(params.jobId) : 0 });
+    return { jobs, job };
 };
 
 const getSalaryFromRange = (range: string) => {

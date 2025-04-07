@@ -18,6 +18,7 @@ import {
 import { Textarea } from "~/common/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { getUserProfile } from "../queries";
+import { makeSSRClient } from "~/supa-client";
 
 export const meta: Route.MetaFunction = ({ data }) => {
     return [{ title: `${data.user.username} | wemake` }];
@@ -25,8 +26,12 @@ export const meta: Route.MetaFunction = ({ data }) => {
 
 export const loader = async ({
     params,
+    request,
 }: Route.LoaderArgs & { params: { username: string } }) => {
-    const user = await getUserProfile(params.username);
+    const { client, headers } = makeSSRClient(request);
+    const user = await getUserProfile(client, {
+        username: params.username,
+    });
     return { user };
 };
 

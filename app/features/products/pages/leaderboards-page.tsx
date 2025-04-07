@@ -5,7 +5,7 @@ import { Button } from "~/common/components/ui/button";
 import { ProductCard } from "../components/product-card";
 import { DateTime } from "luxon";
 import { getProductsByDateRange } from "../queries";
-
+import { makeSSRClient } from "~/supa-client";
 const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;
 const currentWeek = Math.ceil(new Date().getDate() / 7);
@@ -17,25 +17,26 @@ export const meta: Route.MetaFunction = () => {
     ];
 };
 
-export const loader = async () => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
+    const { client, headers } = makeSSRClient(request);
     const [dailyProducts, weeklyProducts, monthlyProducts, yearlyProducts] =
         await Promise.all([
-            getProductsByDateRange({
+            getProductsByDateRange(client, {
                 startDate: DateTime.now().startOf("day"),
                 endDate: DateTime.now().endOf("day"),
                 limit: 7,
             }),
-            getProductsByDateRange({
+            getProductsByDateRange(client, {
                 startDate: DateTime.now().startOf("week"),
                 endDate: DateTime.now().endOf("week"),
                 limit: 7,
             }),
-            getProductsByDateRange({
+            getProductsByDateRange(client, {
                 startDate: DateTime.now().startOf("month"),
                 endDate: DateTime.now().endOf("month"),
                 limit: 7,
             }),
-            getProductsByDateRange({
+            getProductsByDateRange(client, {
                 startDate: DateTime.now().startOf("year"),
                 endDate: DateTime.now().endOf("year"),
                 limit: 7,
@@ -59,7 +60,7 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps<typ
                 {loaderData.dailyProducts.map((product, index) => (
                     <ProductCard
                         key={product.product_id}
-                        id={`product-${product.product_id}`}
+                        id={Number(product.product_id)}
                         name={product.name}
                         description={product.tagline}
                         reviewsCount={Number(product.reviews)}
@@ -80,7 +81,7 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps<typ
                 {loaderData.weeklyProducts.map((product, index) => (
                     <ProductCard
                         key={product.product_id}
-                        id={`product-${product.product_id}`}
+                        id={Number(product.product_id)}
                         name={product.name}
                         description={product.tagline}
                         reviewsCount={Number(product.reviews)}
@@ -101,7 +102,7 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps<typ
                 {loaderData.monthlyProducts.map((product, index) => (
                     <ProductCard
                         key={product.product_id}
-                        id={`product-${product.product_id}`}
+                        id={Number(product.product_id)}
                         name={product.name}
                         description={product.tagline}
                         reviewsCount={Number(product.reviews)}
@@ -122,7 +123,7 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps<typ
                 {loaderData.yearlyProducts.map((product, index) => (
                     <ProductCard
                         key={product.product_id}
-                        id={`product-${product.product_id}`}
+                        id={Number(product.product_id)}
                         name={product.name}
                         description={product.tagline}
                         reviewsCount={Number(product.reviews)}
