@@ -20,7 +20,7 @@ export const getUserProfile = async (
          `
         )
         .eq("username", username)
-        .single();
+        .maybeSingle();
     if (error) {
         throw error;
     }

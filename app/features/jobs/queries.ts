@@ -50,12 +50,38 @@ export const getJobs = async (
     return data;
 };
 
-export const getJobById = async (client: SupabaseClient<Database>, { jobId }: { jobId: number }) => {
+export const getJobById = async (
+    client: SupabaseClient<Database>,
+    { jobId }: { jobId: number }
+) => {
     const { data, error } = await client
         .from("jobs")
-        .select("*")
+        .select(
+            `
+         job_id,
+         title,
+         description,
+         requirements,
+         salary_range,
+         location,
+         job_type,
+         created_at,
+         updated_at,
+         company_id,
+         company:companies (
+           company_id,
+           name,
+           logo_url,
+           description,
+           website,
+           location
+         )
+         `
+        )
         .eq("job_id", jobId)
-        .single();
-    if (error) throw error;
+        .maybeSingle();
+    if (error) {
+        throw error;
+    }
     return data;
 };

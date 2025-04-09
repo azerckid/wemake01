@@ -56,6 +56,8 @@ git push --force
 git reset --hard f29c00ef2db81a5fb7ff60f1729da72f3567afa9
 git clean -fd && git checkout .
 ```
+# 테스트유저
+azerckid -> Daumkakao12!@
 
 # Welcome to React Router!
 

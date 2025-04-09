@@ -9,6 +9,7 @@ export type InputPairProps = {
     id: string;
     placeholder: string;
     textArea?: boolean;
+    error?: string;
 };
 
 export default function InputPair({ label, description, textArea = false, ...rest }: InputPairProps & InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>) {
