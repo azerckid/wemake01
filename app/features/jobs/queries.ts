@@ -50,6 +50,13 @@ export const getJobs = async (
     return data;
 };
 
+/**
+ * 특정 job의 상세 정보를 조회합니다.
+ * 
+ * 변경 기록:
+ * - 2024-04-10: company:companies 관계 조회 제거 (테이블에 해당 컬럼이 없음)
+ * - 2024-04-10: jobs 테이블의 실제 컬럼들로 수정 (overview, company_name 등)
+ */
 export const getJobById = async (
     client: SupabaseClient<Database>,
     { jobId }: { jobId: number }
@@ -60,22 +67,17 @@ export const getJobById = async (
             `
          job_id,
          title,
-         description,
-         requirements,
-         salary_range,
-         location,
+         overview,
+         company_name,
+         company_logo_url,
+         company_location,
          job_type,
-         created_at,
-         updated_at,
-         company_id,
-         company:companies (
-           company_id,
-           name,
-           logo_url,
-           description,
-           website,
-           location
-         )
+         location_type,
+         salary_range,
+         responsibilities,
+         qualifications,
+         benefits,
+         created_at
          `
         )
         .eq("job_id", jobId)

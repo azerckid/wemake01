@@ -51,7 +51,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
 export default function LoginPage({ actionData }: Route.ComponentProps) {
     const navigation = useNavigation();
-    const isSubmitting = navigation.state === "submitting";
+    const isSubmitting = navigation.state === "submitting" || navigation.state === "loading";
 
     return (
         <div className="flex flex-col relative items-center justify-center h-full">
