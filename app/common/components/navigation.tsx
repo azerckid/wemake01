@@ -140,8 +140,20 @@ const menus = [
 ]
 
 export default function Navigation(
-    { isLoggedIn, hasNotifications, hasMessages }
-        : { isLoggedIn: boolean, hasNotifications: boolean, hasMessages: boolean }) {
+    { isLoggedIn,
+        username,
+        avatar,
+        name,
+        hasNotifications,
+        hasMessages
+    }: {
+        isLoggedIn: boolean,
+        username?: string,
+        avatar?: string | null,
+        name?: string,
+        hasNotifications: boolean,
+        hasMessages: boolean
+    }) {
 
     return (
         <nav className="flex flex-row px-20 h-16 items-center justify-between backdrop-blur fixed top-0 left-0 right-0 z-50 bg-background" >
@@ -209,19 +221,27 @@ export default function Navigation(
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Avatar>
-                                    <AvatarImage src="https://github.com/azerckid.png" />
-                                    <AvatarFallback>U</AvatarFallback>
+                                    {avatar ? (
+                                        <AvatarImage src={avatar} />
+                                    ) : (
+                                        <AvatarFallback>{name?.[0]}</AvatarFallback>
+                                    )}
                                 </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-64">
                                 <DropdownMenuLabel className="flex flex-row gap-2">
                                     <Avatar>
-                                        <AvatarImage src="https://github.com/azerckid.png" />
-                                        <AvatarFallback>U</AvatarFallback>
+                                        {avatar ? (
+                                            <AvatarImage src={avatar} />
+                                        ) : (
+                                            <AvatarFallback>{name?.[0]}</AvatarFallback>
+                                        )}
                                     </Avatar>
                                     <div className="flex flex-col">
-                                        <span className="text-sm font-medium">azerckid</span>
-                                        <span className="text-sm text-muted-foreground">azerckid@gmail.com</span>
+                                        <span className="font-medium">{name}</span>
+                                        <span className="text-xs text-muted-foreground">
+                                            @{username}
+                                        </span>
                                     </div>
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
