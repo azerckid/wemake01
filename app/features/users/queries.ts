@@ -36,13 +36,13 @@ export const getUserById = async (
         .select(
             `
           profile_id,
-          name,
           username,
-          avatar_url 
+          avatar_url,
+          name
           `
         )
         .eq("profile_id", id)
-        .single();
+        .maybeSingle();
     if (error) {
         throw error;
     }

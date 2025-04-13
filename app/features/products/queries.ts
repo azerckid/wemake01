@@ -82,7 +82,7 @@ export const getCategory = async (
         .from("categories")
         .select("category_id, name, description")
         .eq("category_id", categoryId)
-        .single();
+        .maybeSingle();
     if (error) throw error;
     return data;
 };
@@ -153,7 +153,7 @@ export const getProductById = async (
         .from("product_overview_view")
         .select("*")
         .eq("product_id", productId)
-        .single();
+        .maybeSingle();
     if (error) throw error;
     return data;
 };

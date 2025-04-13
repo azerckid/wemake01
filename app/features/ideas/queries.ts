@@ -23,7 +23,7 @@ export const getGptIdea = async (
         .from("gpt_ideas_view")
         .select("*")
         .eq("gpt_idea_id", Number(ideaId))
-        .single();
+        .maybeSingle();
     if (error) {
         throw error;
     }

@@ -35,17 +35,23 @@ export const getTeamById = async (
         .from("teams")
         .select(
             `
-        *,
-        team_leader:profiles!inner(
-          username,
-          avatar_url,
-          role,
-          name
-        )
+          team_id,
+          name,
+          description,
+          created_at,
+          updated_at,
+          leader_id,
+          leader:profiles (
+            profile_id,
+            username,
+            avatar_url,
+            role,
+            name
+          )
         `
         )
         .eq("team_id", parseInt(teamId))
-        .single();
+        .maybeSingle();
     if (error) throw error;
     return data;
 };

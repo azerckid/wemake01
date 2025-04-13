@@ -11,7 +11,7 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
         .from("product")
         .select("url")
         .eq("product_id", productId)
-        .single();
+        .maybeSingle();
 
     if (data) {
         await client.rpc("track_event", {

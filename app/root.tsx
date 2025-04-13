@@ -52,6 +52,8 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
   if (user) {
     const profile = await getUserById(client, { id: user?.id });
+    console.log("===========", profile);
+    console.log("===========", user);
     return { user, profile };
   }
   return { user: null, profile: null };
@@ -62,6 +64,7 @@ export default function App({ loaderData }: Route.ComponentProps<typeof loader>)
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
   const isLoggedIn = loaderData.user !== null;
+  console.log("===========", loaderData.user?.user_metadata);
   return (
     <div
       className={cn({
@@ -72,9 +75,9 @@ export default function App({ loaderData }: Route.ComponentProps<typeof loader>)
       {pathname.includes("/auth")
         ? null
         : <Navigation isLoggedIn={isLoggedIn}
-          username={loaderData.profile?.username}
-          avatar={loaderData.profile?.avatar_url}
-          name={loaderData.profile?.name}
+          username={loaderData.user?.user_metadata?.preferred_username}
+          avatar={loaderData.user?.user_metadata?.avatar_url}
+          name={loaderData.user?.user_metadata?.name}
           hasNotifications={true}
           hasMessages={true} />}
       <Outlet />

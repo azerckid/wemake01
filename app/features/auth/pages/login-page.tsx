@@ -6,6 +6,7 @@ import AuthButtons from "../components/auth-buttons";
 import { LoaderCircle } from "lucide-react";
 import { z } from "zod";
 import { makeSSRClient } from "~/supa-client";
+import { useEffect, useState } from "react";
 
 export const meta: Route.MetaFunction = () => {
     return [{ title: "Login | wemake" }];
@@ -49,9 +50,22 @@ export const action = async ({ request }: Route.ActionArgs) => {
     return redirect("/", { headers });
 };
 
-export default function LoginPage({ actionData }: Route.ComponentProps) {
+export default function LoginPage({ actionData, loaderData }: Route.ComponentProps) {
     const navigation = useNavigation();
     const isSubmitting = navigation.state === "submitting" || navigation.state === "loading";
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) {
+        return null;
+    }
+
+    // URL에서 에러 파라미터 확인
+    const url = new URL(window.location.href);
+    const oauthError = url.searchParams.get("error");
 
     return (
         <div className="flex flex-col relative items-center justify-center h-full">
@@ -61,6 +75,12 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 
             <div className="flex items-center flex-col justify-center w-full max-w-md gap-10">
                 <h1 className="text-2xl font-semibold">Log in to your account</h1>
+
+                {oauthError && (
+                    <div className="w-full p-3 bg-red-100 text-red-700 rounded-md">
+                        <p className="text-sm">OAuth error: {oauthError}</p>
+                    </div>
+                )}
 
                 <Form className="w-full space-y-4" method="post">
                     <InputPair
