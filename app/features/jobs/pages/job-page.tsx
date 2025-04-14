@@ -5,10 +5,12 @@ import { Button } from "~/common/components/ui/button";
 import { getJobById } from "../queries";
 import { DateTime } from "luxon";
 import { makeSSRClient } from "~/supa-client";
-export const meta: Route.MetaFunction = () => {
-    return [{
-        title: "Job Details",
-    }]
+
+export const meta: Route.MetaFunction = ({ data }) => {
+    if (!data?.job) {
+        return [{ title: "Job not found | wemake" }];
+    }
+    return [{ title: `${data.job.location_type} | wemake` }];
 }
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
     const { client, headers } = makeSSRClient(request);
@@ -17,6 +19,10 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
 };
 
 export default function JobPage({ loaderData }: Route.ComponentProps) {
+    if (!loaderData.job) {
+        return <div>Job not found</div>;
+    }
+
     return (
         <div>
             <div className="bg-gradient-to-tr from-primary/80 to-primary/10 h-60 w-full rounded-lg"></div>
@@ -68,7 +74,7 @@ export default function JobPage({ loaderData }: Route.ComponentProps) {
                     <div className="space-y-2">
                         <h4 className="text-2xl font-bold">Skills</h4>
                         <ul className="list-disc list-inside text-lg text-muted-foreground">
-                            {(loaderData.job.skills.split(",")).map((item: string) => (
+                            {((loaderData.job as any).skills?.split(",") || []).map((item: string) => (
                                 <li key={item}>{item}</li>
                             ))}
                         </ul>

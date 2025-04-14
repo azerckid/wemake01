@@ -115,18 +115,20 @@ export const getPostById = async (
       content,
       created_at,
       updated_at,
-      user_id,
+      profile_id,
       topic_id,
-      user:users (
-        user_id,
+      profile:profiles!posts_profile_id_profiles_profile_id_fk (
+        profile_id,
         username,
-        full_name,
-        avatar_url
+        name,
+        avatar_url,
+        role,
+        created_at
       ),
       topic:topics (
         topic_id,
         name,
-        description
+        slug
       )
       `
     )

@@ -36,12 +36,15 @@ export const getTeamById = async (
         .select(
             `
           team_id,
-          name,
-          description,
+          product_name,
+          product_description,
+          product_stage,
+          team_size,
+          equity_split,
+          roles,
           created_at,
           updated_at,
-          leader_id,
-          leader:profiles (
+          team_leader:profiles!inner (
             profile_id,
             username,
             avatar_url,
