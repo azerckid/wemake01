@@ -6,7 +6,6 @@ import {
     BreadcrumbSeparator,
 } from "~/common/components/ui/breadcrumb";
 import type { Route } from "./+types/post-page";
-import { Form, Link } from "react-router";
 import { ChevronUpIcon, DotIcon, MessageCircleIcon } from "lucide-react";
 import { Button } from "~/common/components/ui/button";
 import { Textarea } from "~/common/components/ui/textarea";
@@ -20,6 +19,11 @@ import { Reply } from "~/features/community/components/reply";
 import { getPostById, getReplies } from "../queries";
 import { DateTime } from "luxon";
 import { makeSSRClient } from "~/supa-client";
+import { getLoggedInUserId } from "~/features/users/queries";
+import { z } from "zod";
+import { useEffect, useRef } from "react";
+import { Form, Link, useOutletContext } from "react-router";
+import { createReply } from "../mutations";
 
 export const meta: Route.MetaFunction = ({ data }) => {
     if (!data?.post) {
@@ -35,7 +39,49 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     return { post, replies };
 };
 
-export default function PostPage({ loaderData }: Route.ComponentProps) {
+const formSchema = z.object({
+    reply: z.string().min(1),
+});
+
+export const action = async ({ request, params }: Route.ActionArgs) => {
+    const { client } = makeSSRClient(request);
+    const userId = await getLoggedInUserId(client);
+    const formData = await request.formData();
+    const { success, error, data } = formSchema.safeParse(
+        Object.fromEntries(formData)
+    );
+    if (!success) {
+        return {
+            formErrors: error.flatten().fieldErrors,
+        };
+    }
+    const { reply } = data;
+    await createReply(client, {
+        postId: params.postId,
+        reply,
+        userId,
+    });
+    return {
+        ok: true,
+    };
+};
+
+export default function PostPage({
+    loaderData,
+    actionData,
+}: Route.ComponentProps) {
+    const { isLoggedIn, name, username, avatar } = useOutletContext<{
+        isLoggedIn: boolean;
+        name?: string;
+        username?: string;
+        avatar?: string;
+    }>();
+    const formRef = useRef<HTMLFormElement>(null);
+    useEffect(() => {
+        if (actionData?.ok) {
+            formRef.current?.reset();
+        }
+    }, [actionData?.ok]);
     if (!loaderData?.post) {
         return <div>Post not found</div>;
     }
@@ -48,7 +94,7 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
     const authorRole = loaderData.post.profile?.role || '';
     const authorCreatedAt = loaderData.post.profile?.created_at || '';
     const upvotes = 0; // Default value for upvotes
-    const replies = 0; // Default value for replies
+    const replies = loaderData.replies.length; // Default value for replies
     const products = 0; // Default value for products
 
     return (
@@ -94,27 +140,34 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
                                 <DotIcon className="size-5" />
                                 {DateTime.fromISO(loaderData.post.created_at, {
                                     zone: "utc",
-                                }).toRelative({ unit: "hours" })}
+                                }).toRelative()}
                                 <DotIcon className="size-5" />
                                 <span>{replies} replies</span>
                             </div>
                             <p className="text-muted-foreground w-3/4">{loaderData.post.content}</p>
                         </div>
                     </div>
-                    <Form className="flex items-start gap-5 w-3/4">
-                        <Avatar className="size-14">
-                            <AvatarFallback>N</AvatarFallback>
-                            <AvatarImage src={authorAvatarUrl} />
-                        </Avatar>
-                        <div className="flex flex-col gap-5 items-end w-full">
-                            <Textarea
-                                placeholder="Write a reply"
-                                className="w-full resize-none"
-                                rows={5}
-                            />
-                            <Button>Reply</Button>
-                        </div>
-                    </Form>
+                    {isLoggedIn ? (
+                        <Form
+                            ref={formRef}
+                            className="flex items-start gap-5 w-3/4"
+                            method="post"
+                        >
+                            <Avatar className="size-14">
+                                <AvatarFallback>{name?.[0]}</AvatarFallback>
+                                <AvatarImage src={avatar} />
+                            </Avatar>
+                            <div className="flex flex-col gap-5 items-end w-full">
+                                <Textarea
+                                    name="reply"
+                                    placeholder="Write a reply"
+                                    className="w-full resize-none"
+                                    rows={5}
+                                />
+                                <Button>Reply</Button>
+                            </div>
+                        </Form>
+                    ) : null}
                     <div className="space-y-10">
                         <h4 className="font-semibold">{replies} Replies</h4>
                         <div className="flex flex-col gap-5">
@@ -152,7 +205,7 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
                     <div className="gap-2 text-sm flex flex-col">
                         <span>🎂 Joined {DateTime.fromISO(loaderData.post.profile?.created_at || '', {
                             zone: "utc",
-                        }).toRelative({ unit: "hours" })}{" "} ago</span>
+                        }).toRelative()}{" "} ago</span>
                         <span>🚀 Launched {products} products</span>
                     </div>
                     <Button variant="outline" className="w-full">
