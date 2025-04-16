@@ -8,42 +8,54 @@ import { DateTime } from "luxon";
 interface IdeaCardProps {
     id: number;
     title: string;
-    viewCount: number;
-    postedAt: string;
-    likeCount: number;
+    owner?: boolean;
+    viewsCount?: number;
+    postedAt?: string;
+    likesCount?: number;
     claimed?: boolean;
 }
 
-export function IdeaCard({ id, title, viewCount, postedAt, likeCount, claimed }: IdeaCardProps) {
+export function IdeaCard({ id, title, owner, viewsCount, postedAt, likesCount, claimed }: IdeaCardProps) {
     return (
         <Card className="bg-transparent hover:bg-card/50 transition-all duration-300">
             <CardHeader>
-                <Link to={`/ideas/${id}`}>
+                <Link to={claimed || owner ? "" : `/ideas/${id}`}>
                     <CardTitle className="text-lg">
-                        <span className={cn(claimed ?
-                            "bg-muted-foreground selection:bg-muted-foreground text-muted-foreground"
-                            : "")}>{title}</span>
+                        <span className={cn(
+                            claimed
+                                ? "bg-muted-foreground break-all selection:bg-muted-foreground text-muted-foreground"
+                                : ""
+                        )}
+                        >
+                            {title}
+                        </span>
 
                     </CardTitle>
                 </Link>
             </CardHeader>
-            <CardContent className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                    <EyeIcon className="w-4 h-4" />
-                    <span className="text-sm text-muted-foreground">{viewCount} views</span>
-                </div>
-                <DotIcon className="w-4 h-4" />
-                <span>{DateTime.fromISO(postedAt).toRelative()}</span>
-            </CardContent>
-            <CardFooter className="flex items-center gap-2 justify-end">
-                <Button variant="outline">
-                    <HeartIcon className="w-4 h-4" />
-                    <span className="text-sm text-muted-foreground">{likeCount} likes</span>
-                </Button>
-                {!claimed ? (
-                    <Button asChild>
-                        <Link to={`/ideas/${id}/claim`}>Claim idea now &rarr;</Link>
-                    </Button>
+            {owner ? null : (
+                <CardContent className="flex items-center text-sm">
+                    <div className="flex items-center gap-1">
+                        <EyeIcon className="w-4 h-4" />
+                        <span>{viewsCount}</span>
+                    </div>
+                    <DotIcon className="w-4 h-4" />
+                    {postedAt ? (
+                        <span>{DateTime.fromISO(postedAt).toRelative()}</span>
+                    ) : null}
+                </CardContent>
+            )}
+            <CardFooter className="flex justify-end gap-2">
+                {!claimed && !owner ? (
+                    <>
+                        <Button variant="outline">
+                            <HeartIcon className="w-4 h-4" />
+                            <span>{likesCount}</span>
+                        </Button>
+                        <Button asChild>
+                            <Link to={`/ideas/${id}`}>Claim idea now &rarr;</Link>
+                        </Button>
+                    </>
                 ) : (
                     <Button variant="secondary" disabled className="cursor-not-allowed">
                         <LockIcon className="w-4 h-4" />
@@ -52,6 +64,6 @@ export function IdeaCard({ id, title, viewCount, postedAt, likeCount, claimed }:
                 )}
 
             </CardFooter>
-        </Card>
+        </Card >
     );
 } 

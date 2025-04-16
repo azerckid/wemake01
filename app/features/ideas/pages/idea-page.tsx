@@ -7,29 +7,62 @@ import type { Route } from "./+types/idea-page";
 import { getGptIdea } from "../queries";
 import { DateTime } from "luxon";
 import { makeSSRClient } from "~/supa-client";
+import { getLoggedInUserId } from "~/features/users/queries";
+import { Form, redirect } from "react-router";
+import { claimIdea } from "../mutations";
+
 export const meta = ({
     data: {
-        idea: { gpt_idea_id, idea },
+        idea,
     },
 }: Route.MetaArgs) => {
+    if (!idea) {
+        return [
+            { title: "Idea Not Found | wemake" },
+            { name: "description", content: "The requested idea could not be found" },
+        ];
+    }
+
     return [
-        { title: `Idea #${gpt_idea_id}: ${idea} | wemake` },
+        { title: `Idea #${idea.gpt_idea_id}: ${idea.idea} | wemake` },
         { name: "description", content: "Find ideas for your next project" },
     ];
 }
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
-    const { client, headers } = makeSSRClient(request);
+    const { client } = makeSSRClient(request);
     const idea = await getGptIdea(client, { ideaId: params.ideaId });
+    if (idea?.is_claimed) {
+        throw redirect(`/ideas`);
+    }
     return { idea };
 };
 
+export const action = async ({ request, params }: Route.ActionArgs) => {
+    const { client } = makeSSRClient(request);
+    const userId = await getLoggedInUserId(client);
+    const idea = await getGptIdea(client, { ideaId: params.ideaId });
+    if (idea?.is_claimed) {
+        return { ok: false };
+    }
+    await claimIdea(client, { ideaId: params.ideaId, userId });
+    return redirect(`/my/dashboard/ideas`);
+};
+
 export default function IdeaPage({ loaderData }: Route.ComponentProps) {
+    if (!loaderData.idea) {
+        return (
+            <div className="space-y-2">
+                <Hero title="Idea Not Found" description="The requested idea could not be found" />
+            </div>
+        );
+    }
+
     return (
-        <div className="space-y-2">
+        <div>
             <Hero title={`Idea #${loaderData.idea.gpt_idea_id}`} description={loaderData.idea.idea ?? ""} />
-            <div className="max-w-prose mx-auto flex flex-col gap-4">
-                <p className="italic text-center">"{loaderData.idea.idea}"</p>
+            <div className="max-w-prose mx-auto flex flex-col items-center gap-4">
+                <div className="italic text-center">"{loaderData.idea.idea}"</div>
                 <div className="flex items-center text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                         <EyeIcon className="w-4 h-4" />
@@ -44,7 +77,11 @@ export default function IdeaPage({ loaderData }: Route.ComponentProps) {
                     </Button>
                 </div>
                 <div className="flex justify-center w-full">
-                    <Button size="default">claim idea now &rarr;</Button>
+                    {loaderData.idea.is_claimed ? null : (
+                        <Form method="post">
+                            <Button size="lg">Claim idea</Button>
+                        </Form>
+                    )}
                 </div>
             </div>
         </div>
