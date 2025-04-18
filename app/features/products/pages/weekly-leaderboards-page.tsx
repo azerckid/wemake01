@@ -1,14 +1,15 @@
-import { DateTime } from "luxon";
-import { data, isRouteErrorResponse } from "react-router";
 import type { Route } from "~/+types/products/leaderboards";
-import { z } from "zod";
+import { Link } from "react-router";
+import { data, isRouteErrorResponse } from "react-router";
+import { DateTime } from "luxon";
+import { date, z } from "zod";
 import { Hero } from "~/common/components/hero";
 import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
-import { Link } from "react-router";
 import ProductPagination from "~/common/components/product-pagination";
 import { getProductPagesByDateRange, getProductsByDateRange } from "../queries";
 import { PAGE_SIZE } from "../contants";
+import { makeSSRClient } from "~/supa-client";
 
 const paramSchema = z.object({
     year: z.coerce.number(),
@@ -31,7 +32,6 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
         weekYear: parsedData.year,
         weekNumber: parsedData.week
     }).setZone("Asia/Seoul");
-
     const today = DateTime.now().setZone("Asia/Seoul").startOf("day");
 
     if (!date.isValid) {
@@ -43,15 +43,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
             { status: 400 }
         );
     }
-    if (!success) {
-        throw data(
-            {
-                message: "Week is in the future",
-                error_code: "FUTURE_WEEK"
-            },
-            { status: 400 }
-        );
-    }
+
     if (date > today) {
         throw data(
             {
@@ -61,23 +53,35 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
             { status: 400 }
         );
     }
+
+    const { client } = makeSSRClient(request);
     const url = new URL(request.url);
-    const products = await getProductsByDateRange({
-        startDate: date.startOf("week"),
-        endDate: date.endOf("week"),
-        limit: PAGE_SIZE,
-        page: Number(url.searchParams.get("page") || 1),
-    });
-    const totalPages = await getProductPagesByDateRange({
-        startDate: date.startOf("week"),
-        endDate: date.endOf("week")
-    });
+    const pageParam = url.searchParams.get("page") ?? "1";
+    const page = parseInt(pageParam, 10) as number;
+
+    const products = await getProductsByDateRange(
+        client,
+        {
+            startDate: date.startOf("week"),
+            endDate: date.endOf("week"),
+            limit: PAGE_SIZE,
+            page,
+        }
+    );
+
+    const totalPages = await getProductPagesByDateRange(
+        client,
+        {
+            startDate: date.startOf("week"),
+            endDate: date.endOf("week"),
+        }
+    );
+
     return {
         ...parsedData,
         products,
         totalPages
     };
-
 };
 
 export default function WeeklyLeaderboardsPage({ loaderData }: Route.ComponentProps<typeof loader>) {
@@ -114,7 +118,7 @@ export default function WeeklyLeaderboardsPage({ loaderData }: Route.ComponentPr
                 {loaderData.products.map((product, index) => (
                     <ProductCard
                         key={product.product_id}
-                        id={`product-${product.product_id}`}
+                        id={product.product_id}
                         name={product.name}
                         description={product.tagline}
                         reviewsCount={Number(product.reviews)}

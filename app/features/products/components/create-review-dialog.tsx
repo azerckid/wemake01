@@ -1,79 +1,91 @@
-import { DialogHeader, DialogTitle, DialogFooter } from "~/common/components/ui/dialog";
-
-import { DialogDescription } from "~/common/components/ui/dialog";
-
-import { DialogContent } from "~/common/components/ui/dialog";
-import { Form, FormControl, FormItem, FormLabel } from "~/common/components/ui/form";
-import { useForm } from "react-hook-form";
-import InputPair from "~/common/components/input-pair";
-import { Button } from "~/common/components/ui/button";
-import { Label } from "~/common/components/ui/label";
 import { StarIcon } from "lucide-react";
 import { useState } from "react";
+import { Form, useActionData } from "react-router";
+import InputPair from "~/common/components/input-pair";
+import { Button } from "~/common/components/ui/button";
+import {
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from "~/common/components/ui/dialog";
+import { Label } from "~/common/components/ui/label";
+import { action } from "../pages/product-reviews-page";
+
 export default function CreateReviewDialog() {
-
-    const [rating, setRating] = useState<number>(0)
-    const [hoveredStar, setHoveredStar] = useState<number>(0)
-
-
-    const form = useForm({
-        defaultValues: {
-            rating: 0,
-        },
-    })
-
+    const [rating, setRating] = useState<number>(0);
+    const [hoveredStar, setHoveredStar] = useState<number>(0);
+    const actionData = useActionData<typeof action>();
     return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle className="text-2xl font-semibold">what do you think about this product?</DialogTitle>
+                <DialogTitle className="text-2xl">
+                    What do you think of this product?
+                </DialogTitle>
                 <DialogDescription>
-                    Please share your thoughts with us.
+                    Share your thoughts and experiences with this product.
                 </DialogDescription>
             </DialogHeader>
-            <Form {...form}>
-                <form className="space-y-10">
-                    <div className="space-y-2">
-                        <Label className="flex flex-col gap-2 mb-5">Rating
-                            <small className="text-gray-500">what would you rate this product?</small>
-                        </Label>
-                        <div className="flex gap-2">
-                            {[1, 2, 3, 4, 5].map((_, index) => (
-                                <label
-                                    key={index}
-                                    className={`cursor-pointer relative`}
-                                    onMouseEnter={() => setHoveredStar(index)}
-                                    onMouseLeave={() => setHoveredStar(0)}>
-                                    <StarIcon
-                                        className="w-4 h-4 text-yellow-500 "
-                                        fill={hoveredStar >= index || rating >= index
+            <Form className="space-y-10" method="post">
+                <div>
+                    <Label className="flex flex-col gap-1">
+                        Rating
+                        <small className="text-muted-foreground">
+                            What would you rate this product?
+                        </small>
+                    </Label>
+                    <div className="flex gap-2 mt-5">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <label
+                                key={star}
+                                className="relative cursor-pointer"
+                                onMouseEnter={() => setHoveredStar(star)}
+                                onMouseLeave={() => setHoveredStar(0)}
+                            >
+                                <StarIcon
+                                    className="size-5 text-yellow-400"
+                                    fill={
+                                        hoveredStar >= star || rating >= star
                                             ? "currentColor"
-                                            : "none"}
-                                    />
-                                    <input
-                                        type="radio"
-                                        name="rating"
-                                        value={index}
-                                        required className="opacity-0 h-px w-px absolute"
-                                        onChange={() => setRating(index)}
-                                    />
-                                </label>
-                            ))}
-                        </div>
+                                            : "none"
+                                    }
+                                />
+                                <input
+                                    type="radio"
+                                    value={star}
+                                    name="rating"
+                                    required
+                                    className="opacity-0 h-px w-px absolute"
+                                    onChange={() => setRating(star)}
+                                />
+                            </label>
+                        ))}
                     </div>
-                    <InputPair
-                        textArea
-                        required
-                        label="Review"
-                        placeholder="Write your review here..."
-                        id="review"
-                        description="max 1000 characters"
-                    />
-                </form>
+                    {actionData?.formErrors?.rating && (
+                        <p className="text-red-500">
+                            {actionData.formErrors.rating.join(", ")}
+                        </p>
+                    )}
+                </div>
+                <InputPair
+                    id="review"
+                    textArea
+                    required
+                    name="review"
+                    label="Review"
+                    description="Maximum 1000 characters"
+                    placeholder="Tell us more about your experience with this product"
+                />
+                {actionData?.formErrors?.review && (
+                    <p className="text-red-500">
+                        {actionData.formErrors.review.join(", ")}
+                    </p>
+                )}
                 <DialogFooter>
-                    <Button type="submit">Submit</Button>
+                    <Button>Submit review</Button>
                 </DialogFooter>
             </Form>
-
         </DialogContent>
-    )
+    );
 }

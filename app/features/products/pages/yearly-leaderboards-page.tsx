@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { data, isRouteErrorResponse } from "react-router";
-import type { Route } from "~/+types/products/leaderboards";
+import type { Route } from "./+types/yearly-leaderboards-page";
 import { z } from "zod";
 import { Hero } from "~/common/components/hero";
 import { ProductCard } from "../components/product-card";
@@ -9,66 +9,51 @@ import { Link } from "react-router";
 import ProductPagination from "~/common/components/product-pagination";
 import { getProductPagesByDateRange, getProductsByDateRange } from "../queries";
 import { PAGE_SIZE } from "../contants";
+import { makeSSRClient } from "~/supa-client";
 
 const paramSchema = z.object({
-    year: z.coerce.number()
+    year: z.coerce.number().int().min(2000).max(2100)
 });
 
-export const loader = async ({ params, request }: Route.LoaderArgs) => {
-    const { success, data: parsedData } = paramSchema.safeParse(params);
-    if (!success) {
-        throw data(
-            {
-                message: "Invalid year",
-                error_code: "INVALID_YEAR"
-            },
-            { status: 400 }
-        );
-    }
-
-    const date = DateTime.fromObject({
-        year: parsedData.year
-    }).setZone("Asia/Seoul");
-
-    const today = DateTime.now().setZone("Asia/Seoul").startOf("year");
-
-    if (!date.isValid) {
-        throw data(
-            {
-                message: "Invalid year",
-                error_code: "INVALID_YEAR"
-            },
-            { status: 400 }
-        );
-    }
-    if (date > today) {
-        throw data(
-            {
-                message: "Year is in the future",
-                error_code: "FUTURE_YEAR"
-            },
-            { status: 400 }
-        );
-    }
-    const url = new URL(request.url);
-    const products = await getProductsByDateRange({
-        startDate: date.startOf("year"),
-        endDate: date.endOf("year"),
-        limit: PAGE_SIZE,
-        page: Number(url.searchParams.get("page") || 1),
-    });
-    const totalPages = await getProductPagesByDateRange({
-        startDate: date.startOf("year"),
-        endDate: date.endOf("year")
-    });
-    return {
-        ...parsedData,
-        products,
-        totalPages
-    };
+export const meta: Route.MetaFunction = () => {
+    return [
+        { title: "Yearly Leaderboards | wemake" },
+        { name: "description", content: "Top products of the year" },
+    ];
 };
 
-export default function YearlyLeaderboardsPage({ loaderData }: Route.ComponentProps<typeof loader>) {
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
+    const { client } = makeSSRClient(request);
+
+    // 연도 파라미터 확인
+    const year = params.year ? Number(params.year) : new Date().getFullYear();
+
+    // 해당 연도의 시작일과 종료일 계산
+    const startDate = DateTime.fromObject({ year, month: 1, day: 1 });
+    const endDate = DateTime.fromObject({ year, month: 12, day: 31 });
+
+    // 페이지 번호 가져오기
+    const url = new URL(request.url);
+    const page = Number(url.searchParams.get("page") || 1);
+
+    // 올바른 형식으로 함수 호출
+    const products = await getProductsByDateRange(client, {
+        startDate,
+        endDate,
+        limit: PAGE_SIZE,
+        page
+    });
+
+    // 총 페이지 수 계산
+    const totalPages = await getProductPagesByDateRange(client, {
+        startDate,
+        endDate
+    });
+
+    return { products, year, totalPages };
+};
+
+export default function YearlyLeaderboardsPage({ loaderData }: Route.ComponentProps) {
     const urlDate = DateTime.fromObject({
         year: loaderData.year
     }).setZone("Asia/Seoul");
@@ -80,23 +65,19 @@ export default function YearlyLeaderboardsPage({ loaderData }: Route.ComponentPr
     return (
         <div className="container mx-auto px-4">
             <Hero
-                title="The best of year Leaderboards "
-                description={`${urlDate.startOf("year").toLocaleString(DateTime.DATE_MED)}-${urlDate.endOf("year").toLocaleString(DateTime.DATE_MED)}`}
+                title="Yearly Leaderboards"
+                description={`Top products of ${urlDate.toLocaleString({ year: 'numeric' })}`}
             />
             <div className="flex items-center justify-center gap-2 mb-4">
                 <Button variant="outline" asChild>
                     <Link to={`/products/leaderboards/yearly/${previousYear.year}`}>
-                        &larr; {previousYear.toLocaleString({
-                            year: "numeric"
-                        })}
+                        &larr; {previousYear.toLocaleString({ year: 'numeric' })}
                     </Link>
                 </Button>
                 {!isCurrentYear ? (
                     <Button variant="outline" asChild>
                         <Link to={`/products/leaderboards/yearly/${nextYear.year}`}>
-                            {nextYear.toLocaleString({
-                                year: "numeric"
-                            })} &rarr;
+                            {nextYear.toLocaleString({ year: 'numeric' })} &rarr;
                         </Link>
                     </Button>
                 ) : null}
@@ -105,13 +86,13 @@ export default function YearlyLeaderboardsPage({ loaderData }: Route.ComponentPr
                 {loaderData.products.map((product, index) => (
                     <ProductCard
                         key={product.product_id}
-                        id={`product-${product.product_id}`}
+                        id={product.product_id}
                         name={product.name}
                         description={product.tagline}
-                        reviewsCount={Number(product.reviews)}
-                        viewsCount={Number(product.views)}
-                        votesCount={Number(product.upvotes)}
                         upvoteCount={Number(product.upvotes)}
+                        viewsCount={Number(product.views)}
+                        reviewsCount={Number(product.reviews)}
+                        votesCount={Number(product.upvotes)}
                     />
                 ))}
             </div>
@@ -133,19 +114,4 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         return <div>{error.message}</div>;
     }
     return <div>Unknown error</div>;
-}
-
-export const meta: Route.MetaFunction = ({ params, data }) => {
-    const urlDate = DateTime.fromObject({
-        year: Number(params.year)
-    }).setZone("Asia/Seoul").setLocale("ko");
-    console.log(data);
-
-    return [
-        {
-            title: `best of ${urlDate.toLocaleString({
-                year: "numeric"
-            })}`
-        },
-    ];
-}; 
+} 

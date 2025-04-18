@@ -155,7 +155,6 @@ export default function Navigation(
         hasMessages: boolean
     }) {
 
-    console.log(name, username, avatar);
     return (
         <nav className="flex flex-row px-20 h-16 items-center justify-between backdrop-blur fixed top-0 left-0 right-0 z-50 bg-background" >
             <div className="flex items-center gap-2">

@@ -48,6 +48,16 @@ export const browserClient = createBrowserClient<Database>(
 
 export const makeSSRClient = (request: Request) => {
     const headers = new Headers();
+
+    // 캐싱을 위한 클라이언트 인스턴스 저장소
+    const clientCache = new Map<string, any>();
+    const cacheKey = request.url;
+
+    // 캐시된 클라이언트가 있으면 재사용
+    if (clientCache.has(cacheKey)) {
+        return clientCache.get(cacheKey);
+    }
+
     const serverSideClient = createServerClient<Database>(
         process.env.SUPABASE_URL!,
         process.env.SUPABASE_ANON_KEY!,
@@ -74,8 +84,13 @@ export const makeSSRClient = (request: Request) => {
         }
     );
 
-    return {
+    const result = {
         client: serverSideClient,
         headers,
     };
+
+    // 결과를 캐시에 저장
+    clientCache.set(cacheKey, result);
+
+    return result;
 };

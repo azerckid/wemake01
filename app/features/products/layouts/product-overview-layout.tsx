@@ -1,81 +1,146 @@
-import { ChevronUpIcon, StarIcon } from "lucide-react";
+import { StarIcon } from "lucide-react";
+import { ChevronUpIcon } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router";
 import { Button, buttonVariants } from "~/common/components/ui/button";
 import { cn } from "~/lib/utils";
 import type { Route } from "./+types/product-overview-layout";
 import { getProductById } from "../queries";
+import { makeSSRClient } from "~/supa-client";
+import { useEffect, useState } from "react";
 
 export function meta({ data }: Route.MetaArgs) {
+    if (!data?.product) {
+        return [{ title: "Product Not Found | wemake" }];
+    }
     return [
         { title: `${data.product.name} Overview | wemake` },
-        { name: "description", content: data.product.description },
+        { name: "description", content: "View product details and information" },
     ];
 }
 
-export async function loader({ params }: Route.LoaderArgs & { params: { productId: string } }) {
-    const product = await getProductById(params.productId);
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
+    const { client } = makeSSRClient(request);
+    const productId = Number(params.productId);
+
+    if (isNaN(productId)) {
+        throw new Error("Invalid product ID");
+    }
+
+    const product = await getProductById(client, { productId });
+
+    if (!product) {
+        throw new Error("Product not found");
+    }
+
     return {
-        product
+        product,
+        review_count: product.reviews || "0"
     };
-}
+};
 
 export default function ProductOverviewLayout({ loaderData }: Route.ComponentProps) {
-    if (!loaderData) return null;
-    const { product } = loaderData;
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!loaderData?.product) {
+        return (
+            <div className="container py-10">
+                <h1 className="text-2xl font-bold">Product Not Found</h1>
+                <p>The requested product could not be found.</p>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-10">
             <div className="flex justify-between">
                 <div className="flex gap-10">
-                    <div className="size-40 rounded-xl shadow-xl bg-primary/50">
+                    <div className="size-40 rounded-xl shadow-xl bg-primary/50 flex items-center justify-center text-4xl">
+                        {loaderData.product.icon?.startsWith('http') ? (
+                            <img
+                                src={loaderData.product.icon}
+                                alt={loaderData.product.name}
+                                className="size-full object-cover"
+                            />
+                        ) : (
+                            <span>{loaderData.product.icon || '?'}</span>
+                        )}
                     </div>
                     <div>
-                        <h1 className="text-5xl font-bold">{product.name}</h1>
-                        <p>Product ID: 1</p>
-                        <p className="text-2xl font-light text-muted-foreground">{product.description}</p>
-                        <div className="mt-5 flex items-center gap-5">
-                            <div className="flex gap-2">
+                        <h1 className="text-5xl font-bold">{loaderData.product.name}</h1>
+                        <p className="text-2xl font-light">{loaderData.product.tagline}</p>
+                        <div className="mt-5 flex items-center gap-2">
+                            <div className="flex text-yellow-400">
                                 {Array.from({ length: 5 }).map((_, i) => (
                                     <StarIcon
                                         key={i}
-                                        className="size-4 text-yellow-500"
+                                        className="size-4"
                                         fill={
-                                            i < Math.floor(product.average_rating)
+                                            i < Math.floor(loaderData.product.average_rating)
                                                 ? "currentColor"
                                                 : "none"
                                         }
                                     />
                                 ))}
                             </div>
-                            <span className="text-muted-foreground">{product.reviews} reviews</span>
+                            <span className="text-muted-foreground">
+                                {loaderData.product.reviews} reviews
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div className="flex gap-4">
-                    <Button variant="outline" size="lg" className="text-lg h-14 px-10" asChild>
-                        <Link to={`/products/${loaderData.product.product_id}/visit`}>
-                            Visit Website
-                        </Link>
+                <div className="flex gap-5">
+                    <Button
+                        variant="secondary"
+                        size="lg"
+                        className="text-lg h-14 px-10"
+                    >
+                        Visit Website
                     </Button>
-                    <Button variant="outline" size="lg" className="text-lg h-14 px-10">
-                        <ChevronUpIcon className="w-4 h-4" />
-                        Upvote ({product.upvotes})
+                    <Button size="lg" className="text-lg h-14 px-10">
+                        <ChevronUpIcon className="size-4" />
+                        Upvote ({loaderData.product.upvotes})
                     </Button>
                 </div>
             </div>
-            <div className="flex gap-2">
-                <Button variant="outline" >
-                    <NavLink to={`/products/${product.product_id}/overview`} className={({ isActive }) => isActive ? cn(buttonVariants({ variant: "ghost" }), "text-pink-500 font-bold") : ""}>Overview</NavLink>
-                </Button>
-                <Button variant="outline" >
-                    <NavLink to={`/products/${product.product_id}/reviews`} className={({ isActive }) => isActive ? cn(buttonVariants({ variant: "ghost" }), "text-pink-500 font-bold") : ""}>Reviews</NavLink>
-                </Button>
+            <div className="flex gap-2.5">
+                <NavLink
+                    end
+                    className={({ isActive }) =>
+                        cn(
+                            buttonVariants({ variant: "outline" }),
+                            isActive && "bg-accent text-foreground"
+                        )
+                    }
+                    to={`/products/${loaderData.product.product_id}/overview`}
+                >
+                    Overview
+                </NavLink>
+                <NavLink
+                    className={({ isActive }) =>
+                        cn(
+                            buttonVariants({ variant: "outline" }),
+                            isActive && "bg-accent text-foreground"
+                        )
+                    }
+                    to={`/products/${loaderData.product.product_id}/reviews`}
+                >
+                    Reviews
+                </NavLink>
             </div>
-            <Outlet context={{
-                productId: product.product_id,
-                description: product.description,
-                how_it_works: product.how_it_works,
-                review_count: product.reviews,
-            }} />
+            <div>
+                <Outlet
+                    context={{
+                        product_id: loaderData.product.product_id,
+                        description: loaderData.product.description,
+                        how_it_works: loaderData.product.how_it_works,
+                        review_count: loaderData.review_count
+                    }}
+                />
+            </div>
         </div>
     );
 }

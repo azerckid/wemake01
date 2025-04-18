@@ -9,6 +9,7 @@ import { Button } from "~/common/components/ui/button";
 import ProductPagination from "~/common/components/product-pagination";
 import { getProductPagesByDateRange, getProductsByDateRange } from "../queries";
 import { PAGE_SIZE } from "../contants";
+import { makeSSRClient } from "~/supa-client";
 
 const paramSchema = z.object({
     year: z.coerce.number(),
@@ -71,17 +72,28 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
             { status: 400 }
         );
     }
+
+    const { client } = makeSSRClient(request);
     const url = new URL(request.url);
-    const products = await getProductsByDateRange({
-        startDate: date.startOf("day"),
-        endDate: date.endOf("day"),
-        limit: PAGE_SIZE,
-        page: Number(url.searchParams.get("page") || 1),
-    });
-    const totalPages = await getProductPagesByDateRange({
-        startDate: date.startOf("day"),
-        endDate: date.endOf("day"),
-    });
+
+    const products = await getProductsByDateRange(
+        client,
+        {
+            startDate: date.startOf("day"),
+            endDate: date.endOf("day"),
+            limit: PAGE_SIZE,
+            page: Number(url.searchParams.get("page") || 1),
+        }
+    );
+
+    const totalPages = await getProductPagesByDateRange(
+        client,
+        {
+            startDate: date.startOf("day"),
+            endDate: date.endOf("day"),
+        }
+    );
+
     return {
         ...parsedData,
         products,
@@ -124,7 +136,7 @@ export default function DailyLeaderboardsPage({ loaderData }: Route.ComponentPro
                 {loaderData.products.map((product, index) => (
                     <ProductCard
                         key={product.product_id}
-                        id={`product-${product.product_id}`}
+                        id={product.product_id}
                         name={product.name}
                         description={product.tagline}
                         reviewsCount={Number(product.reviews)}

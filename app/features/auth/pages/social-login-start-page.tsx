@@ -8,10 +8,8 @@ const paramsSchema = z.object({
 });
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
-    console.log("Social login start page loaded", { params });
 
     const { success, data } = paramsSchema.safeParse(params);
-    console.log("===========", success, data);
 
     if (!success) {
         console.error("Invalid provider parameter", params);
@@ -42,10 +40,8 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
             },
         });
 
-        console.log("===========>>>>>>>", authUrl);
 
         if (error) {
-            console.error("OAuth error:", error);
             return redirect("/auth/login?error=oauth_failed");
         }
 

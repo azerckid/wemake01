@@ -1,19 +1,34 @@
-import { useOutletContext } from "react-router";
-import client from "~/supa-client";
+import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/product-overview-page";
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
-    await client.rpc("track_event", {
-        event_type: "product_view",
-        event_data: {
-            product_id: params.productId,
-        },
-    });
-    return null;
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
+    const { client } = makeSSRClient(request);
+
+    try {
+        const productId = Number(params.productId);
+        if (isNaN(productId)) {
+            throw new Error('Invalid product ID');
+        }
+
+        const { data: product } = await client
+            .from('product')
+            .select('description, how_it_works')
+            .eq('product_id', productId)
+            .single();
+
+        if (!product) {
+            throw new Error('Product not found');
+        }
+
+        return { product };
+    } catch (error) {
+        console.error('Error loading product:', error);
+        throw new Error('Failed to load product');
+    }
 };
 
-export default function ProductOverviewPage() {
-    const { description, how_it_works } = useOutletContext<{ description: string, how_it_works: string }>();
+export default function ProductOverviewPage({ loaderData }: Route.ComponentProps) {
+    const { description, how_it_works } = loaderData.product;
 
     return (
         <div className="space-y-4">
@@ -31,7 +46,6 @@ export default function ProductOverviewPage() {
                     </p>
                 </div>
             </div>
-
         </div>
     );
 }
