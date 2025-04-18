@@ -92,3 +92,35 @@ export const getLoggedInUserId = async (client: SupabaseClient<Database>) => {
     }
     return data.user.id;
 };
+
+export const getProductsByUserId = async (
+    client: SupabaseClient<Database>,
+    { userId }: { userId: string }
+) => {
+    // 먼저 profiles 테이블에서 해당 사용자의 profile_id를 찾습니다.
+    const { data: profileData, error: profileError } = await client
+        .from("profiles")
+        .select("profile_id")
+        .eq("profile_id", userId)
+        .single();
+
+    if (profileError) {
+        throw profileError;
+    }
+
+    if (!profileData) {
+        return []; // 프로필이 없는 경우 빈 배열 반환
+    }
+
+    // 찾은 profile_id로 제품을 조회합니다.
+    const { data, error } = await client
+        .from("product")
+        .select(`name, product_id`)
+        .eq("profile_id", profileData.profile_id);
+
+    if (error) {
+        throw error;
+    }
+
+    return data;
+};
