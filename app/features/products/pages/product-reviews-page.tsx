@@ -7,6 +7,17 @@ import { getLoggedInUserId } from "~/features/users/queries";
 import { createProductReview } from "../mutations";
 import { useState, useEffect } from "react";
 import { Button } from "~/common/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "~/common/components/ui/dialog";
+import { Textarea } from "~/common/components/ui/textarea";
+import { StarIcon } from "lucide-react";
+
 export function meta() {
     return [
         { title: "Product Reviews | wemake" },
@@ -54,16 +65,21 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
         ok: true,
     };
 };
+
 export default function ProductReviewsPage({
     loaderData,
     actionData,
 }: Route.ComponentProps) {
     const [open, setOpen] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [hoveredStar, setHoveredStar] = useState(0);
+
     useEffect(() => {
         if (actionData?.ok) {
             setOpen(false);
         }
     }, [actionData]);
+
     const reviewCount = loaderData.reviews?.length || 0;
 
     return (
@@ -73,9 +89,77 @@ export default function ProductReviewsPage({
                     <h2 className="text-2xl font-bold">
                         {reviewCount} {reviewCount === 1 ? "Review" : "Reviews"}
                     </h2>
-                    <Button variant={"secondary"}>Write a review</Button>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant={"secondary"}>Write a review</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Write a review</DialogTitle>
+                                <DialogDescription>
+                                    Share your thoughts about this product.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <form method="post" className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Rating</label>
+                                    <div className="flex gap-1">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <button
+                                                key={star}
+                                                type="button"
+                                                className="focus:outline-none"
+                                                onClick={() => setRating(star)}
+                                                onMouseEnter={() => setHoveredStar(star)}
+                                                onMouseLeave={() => setHoveredStar(0)}
+                                            >
+                                                <StarIcon
+                                                    className={`size-6 ${star <= (hoveredStar || rating)
+                                                        ? "fill-yellow-400 text-yellow-400"
+                                                        : "text-gray-300"
+                                                        }`}
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                    {actionData?.formErrors?.rating && (
+                                        <p className="text-red-500">
+                                            {actionData.formErrors.rating}
+                                        </p>
+                                    )}
+                                    <input
+                                        type="hidden"
+                                        name="rating"
+                                        value={rating}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label
+                                        htmlFor="review"
+                                        className="text-sm font-medium"
+                                    >
+                                        Review
+                                    </label>
+                                    <Textarea
+                                        id="review"
+                                        name="review"
+                                        placeholder="Write your review here..."
+                                        className="min-h-[100px]"
+                                    />
+                                </div>
+                                {actionData?.formErrors?.review && (
+                                    <p className="text-red-500">
+                                        {actionData.formErrors.review}
+                                    </p>
+                                )}
+                                <div className="flex justify-end">
+                                    <Button type="submit">Submit Review</Button>
+                                </div>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
                 </div>
-                <div className="space-y-20">
+                <div className="space-y-6">
                     {loaderData.reviews && loaderData.reviews.length > 0 ? (
                         loaderData.reviews.map((review) => (
                             <ReviewCard

@@ -22,7 +22,7 @@ export function ReviewCard({
     createdAt
 }: ReviewCardProps) {
     return (
-        <div className="space-y-5">
+        <div className="space-y-1">
             <div className="flex items-center gap-2">
                 <Avatar>
                     <AvatarImage src={avatarUrl ?? undefined} />

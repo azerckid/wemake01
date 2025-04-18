@@ -54,9 +54,9 @@ export const reviews = pgTable("reviews", {
         .primaryKey()
         .generatedByDefaultAsIdentity(),
     product_id: bigint({ mode: "number" })
-        .references(() => product.product_id, { onDelete: "cascade" }),
+        .references(() => product.product_id, { onDelete: "cascade" }).notNull(),
     profile_id: uuid()
-        .references(() => profiles.profile_id, { onDelete: "cascade" }),
+        .references(() => profiles.profile_id, { onDelete: "cascade" }).notNull(),
     review: text().notNull(),
     rating: integer().notNull(),
     created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),

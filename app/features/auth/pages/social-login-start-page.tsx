@@ -40,7 +40,6 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
             },
         });
 
-
         if (error) {
             return redirect("/auth/login?error=oauth_failed");
         }
