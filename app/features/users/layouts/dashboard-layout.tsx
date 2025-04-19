@@ -18,7 +18,6 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     const { client } = await makeSSRClient(request);
     const userId = await getLoggedInUserId(client);
     const products = await getProductsByUserId(client, { userId });
-    console.log(products);
     return {
         userId,
         products,
@@ -62,7 +61,13 @@ export default function DashboardLayout({ loaderData }: Route.ComponentProps) {
                         <SidebarMenu>
                             {loaderData.products.map((product) => (
                                 <SidebarMenuItem key={product.product_id}>
-                                    <SidebarMenuButton asChild>
+                                    <SidebarMenuButton
+                                        asChild
+                                        isActive={
+                                            location.pathname ===
+                                            `/my/dashboard/products/${product.product_id}`
+                                        }
+                                    >
                                         <Link to={`/my/dashboard/products/${product.product_id}`}>
                                             <RocketIcon className="size-4" />
                                             <span>{product.name}</span>

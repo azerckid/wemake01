@@ -39,7 +39,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function DashboardPage({ loaderData }: Route.ComponentProps) {
-    console.log(loaderData.chartData);
     return (
         <div className="space-y-5">
             <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
