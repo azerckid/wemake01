@@ -15,9 +15,20 @@ export type SelectPairProps = {
         value: string;
     }[];
     className?: string;
+    defaultValue?: string;
 };
 
-export default function SelectPair({ label, description, id, name, required = false, placeholder = "Select an option", options, className, ...rest }: SelectPairProps) {
+export default function SelectPair({
+    label,
+    description,
+    id,
+    name,
+    required = false,
+    placeholder = "Select an option",
+    options,
+    defaultValue,
+    className,
+    ...rest }: SelectPairProps) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -28,7 +39,7 @@ export default function SelectPair({ label, description, id, name, required = fa
                     {description}
                 </small>
             </Label>
-            <Select name={name} required={required} {...rest} open={open} onOpenChange={setOpen}>
+            <Select name={name} required={required} {...rest} open={open} onOpenChange={setOpen} defaultValue={defaultValue}>
                 <SelectTrigger className={cn("bg-background", open && "bg-background")}>
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>

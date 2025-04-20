@@ -108,7 +108,7 @@ const menus = [
             {
                 name: "Create Post",
                 description: "share something with the community",
-                to: "/community/create",
+                to: "/community/submit",
             },
         ]
     },
