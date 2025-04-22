@@ -58,7 +58,7 @@ export default function ProductOverviewLayout({ loaderData }: Route.ComponentPro
         <div className="space-y-10">
             <div className="flex justify-between">
                 <div className="flex gap-10">
-                    <div className="size-40 rounded-xl shadow-xl bg-primary/50 flex items-center justify-center text-4xl">
+                    <div className="size-40 overflow-hidden rounded-xl shadow-xl bg-primary/50 flex items-center justify-center text-4xl">
                         {loaderData.product.icon?.startsWith('http') ? (
                             <img
                                 src={loaderData.product.icon}
