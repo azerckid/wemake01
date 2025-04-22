@@ -36,11 +36,20 @@ export const updateUserAvatar = async (
         avatarUrl: string;
     }
 ) => {
-    const { error } = await client
+    // Update profiles table
+    const { error: profileError } = await client
         .from("profiles")
         .update({ avatar_url: avatarUrl })
         .eq("profile_id", id);
-    if (error) {
-        throw error;
+    if (profileError) {
+        throw profileError;
+    }
+
+    // Update user metadata
+    const { error: userError } = await client.auth.updateUser({
+        data: { avatar_url: avatarUrl }
+    });
+    if (userError) {
+        throw userError;
     }
 };
