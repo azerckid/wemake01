@@ -24,6 +24,7 @@ import { z } from "zod";
 import { useEffect, useRef } from "react";
 import { Form, Link, useOutletContext } from "react-router";
 import { createReply } from "../mutations";
+import { cn } from "~/lib/utils";
 
 export const meta: Route.MetaFunction = ({ data }) => {
     if (!data?.post) {
@@ -36,6 +37,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     const { client, headers } = makeSSRClient(request);
     const post = await getPostById(client, { postId: params.postId });
     const replies = await getReplies(client, { postId: params.postId });
+    console.log("Post from loader:", post);
     return { post, replies };
 };
 
@@ -95,9 +97,14 @@ export default function PostPage({
     const authorAvatarUrl = loaderData.post.profile?.avatar_url || '';
     const authorRole = loaderData.post.profile?.role || '';
     const authorCreatedAt = loaderData.post.profile?.created_at || '';
-    const upvotes = 0; // Default value for upvotes
-    const replies = loaderData.replies.length; // Default value for replies
-    const products = 0; // Default value for products
+
+    // 기본값 제공
+    const isUpvoted = false; // 기본값
+    const upvotes = 0; // 기본값
+    const replies = loaderData.replies.length; // 기본값 for replies
+    const products = 0; // 기본값 for products
+
+    console.log("Post data:", loaderData.post);
 
     return (
         <div className="space-y-10">
@@ -127,7 +134,13 @@ export default function PostPage({
             <div className="grid grid-cols-6 gap-40 items-start " >
                 <div className="col-span-4 space-y-10">
                     <div className="flex w-full items-start gap-10">
-                        <Button variant="outline" className="flex flex-col h-14">
+                        <Button
+                            variant="outline"
+                            className={cn(
+                                "flex flex-col h-14",
+                                isUpvoted ? "border-primary text-primary" : ""
+                            )}
+                        >
                             <ChevronUpIcon className="size-4 shrink-0" />
                             <span>{upvotes}</span>
                         </Button>

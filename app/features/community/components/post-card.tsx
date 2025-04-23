@@ -16,6 +16,7 @@ interface PostCardProps {
     postedAt: string | null | undefined;
     expanded?: boolean;
     votesCount?: number;
+    isUpvoted?: boolean;
 }
 
 export function PostCard({
@@ -28,6 +29,7 @@ export function PostCard({
     postedAt = new Date().toISOString(),
     expanded,
     votesCount = 0,
+    isUpvoted = false,
 }: PostCardProps) {
     const formattedDate = postedAt ? DateTime.fromJSDate(new Date(postedAt)).toRelative() : '';
 
@@ -63,7 +65,13 @@ export function PostCard({
                 )}
                 {expanded && (
                     <CardFooter className="flex justify-end  pb-0">
-                        <Button variant="outline" className="flex flex-col h-14">
+                        <Button
+                            variant="outline"
+                            className={cn(
+                                "flex flex-col h-14",
+                                isUpvoted ? "border-primary text-primary" : ""
+                            )}
+                        >
                             <ChevronUpIcon className="size-4 shrink-0" />
                             <span>{votesCount}</span>
                         </Button>

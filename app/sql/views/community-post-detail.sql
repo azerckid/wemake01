@@ -13,7 +13,8 @@ CREATE OR REPLACE VIEW community_post_detail AS
      profiles.avatar_url as author_avatar_url,
      profiles.role as author_role,
      profiles.created_at as author_created_at,
-     (SELECT COUNT(*) FROM product WHERE product.profile_id = profiles.profile_id) as products
+     (SELECT COUNT(*) FROM product WHERE product.profile_id = profiles.profile_id) as products,
+     (SELECT EXISTS (SELECT 1 FROM public.post_upvotes WHERE post_upvotes.post_id = posts.post_id AND post_upvotes.profile_id = auth.uid())) AS is_upvoted
  FROM posts
  INNER JOIN topics USING (topic_id)
  LEFT JOIN post_replies USING (post_id)

@@ -820,6 +820,7 @@ export type Database = {
           author_username: string | null
           content: string | null
           created_at: string | null
+          is_upvoted: boolean | null
           post_id: number | null
           products: number | null
           replies: number | null
@@ -837,6 +838,7 @@ export type Database = {
           author_username: string | null
           authoravatarurl: string | null
           created_at: string | null
+          is_upvoted: boolean | null
           post_id: number | null
           title: string | null
           topic: string | null
