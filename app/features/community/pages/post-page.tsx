@@ -22,7 +22,7 @@ import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
 import { z } from "zod";
 import { useEffect, useRef } from "react";
-import { Form, Link, useOutletContext } from "react-router";
+import { Form, Link, useOutletContext, useFetcher } from "react-router";
 import { createReply } from "../mutations";
 import { cn } from "~/lib/utils";
 
@@ -30,14 +30,13 @@ export const meta: Route.MetaFunction = ({ data }) => {
     if (!data?.post) {
         return [{ title: "Post not found | wemake" }];
     }
-    return [{ title: `${data.post.title} on ${data.post.topic?.name || 'Unknown Topic'} | wemake` }];
+    return [{ title: `${data.post.title} on ${data.post.topic_name || 'Unknown Topic'} | wemake` }];
 };
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
     const { client, headers } = makeSSRClient(request);
     const post = await getPostById(client, { postId: params.postId });
     const replies = await getReplies(client, { postId: params.postId });
-    console.log("Post from loader:", post);
     return { post, replies };
 };
 
@@ -80,7 +79,9 @@ export default function PostPage({
         username?: string;
         avatar?: string;
     }>();
+
     const formRef = useRef<HTMLFormElement>(null);
+    const fetcher = useFetcher();
     useEffect(() => {
         if (actionData?.ok) {
             formRef.current?.reset();
@@ -91,18 +92,18 @@ export default function PostPage({
     }
 
     // Extract topic data safely
-    const topicSlug = loaderData.post.topic?.slug || '';
-    const topicName = loaderData.post.topic?.name || '';
-    const authorUsername = loaderData.post.profile?.username || '';
-    const authorAvatarUrl = loaderData.post.profile?.avatar_url || '';
-    const authorRole = loaderData.post.profile?.role || '';
-    const authorCreatedAt = loaderData.post.profile?.created_at || '';
+    const topicSlug = loaderData.post.topic_slug || '';
+    const topicName = loaderData.post.topic_name || '';
+    const authorUsername = loaderData.post.author_username || '';
+    const authorAvatarUrl = loaderData.post.author_avatar_url || '';
+    const authorRole = loaderData.post.author_role || '';
+    const authorCreatedAt = loaderData.post.author_created_at || '';
 
     // 기본값 제공
-    const isUpvoted = false; // 기본값
-    const upvotes = 0; // 기본값
-    const replies = loaderData.replies.length; // 기본값 for replies
-    const products = 0; // 기본값 for products
+    const isUpvoted = loaderData.post.is_upvoted || false;
+    const upvotes = loaderData.post.upvotes || 0;
+    const replies = loaderData.post.replies || 0;
+    const products = loaderData.post.products || 0;
 
     console.log("Post data:", loaderData.post);
 
@@ -134,16 +135,27 @@ export default function PostPage({
             <div className="grid grid-cols-6 gap-40 items-start " >
                 <div className="col-span-4 space-y-10">
                     <div className="flex w-full items-start gap-10">
-                        <Button
-                            variant="outline"
-                            className={cn(
-                                "flex flex-col h-14",
-                                isUpvoted ? "border-primary text-primary" : ""
-                            )}
-                        >
-                            <ChevronUpIcon className="size-4 shrink-0" />
-                            <span>{upvotes}</span>
-                        </Button>
+                        <fetcher.Form
+                            method="post"
+                            action={`/community/${loaderData.post.post_id}/upvote`} >
+                            <input
+                                type="hidden"
+                                name="postId"
+                                value={loaderData.post.post_id}
+                            />
+                            <Button
+                                variant="outline"
+                                className={cn(
+                                    "flex flex-col h-14",
+                                    isUpvoted
+                                        ? "border-primary text-primary"
+                                        : ""
+                                )}
+                            >
+                                <ChevronUpIcon className="size-4 shrink-0" />
+                                <span>{upvotes}</span>
+                            </Button>
+                        </fetcher.Form>
                         <div className="space-y-10">
                             <div className="space-y-2">
                                 <h2 className="text-3xl font-bold">
@@ -220,7 +232,7 @@ export default function PostPage({
                         </div>
                     </div>
                     <div className="gap-2 text-sm flex flex-col">
-                        <span>🎂 Joined {DateTime.fromISO(loaderData.post.profile?.created_at || '', {
+                        <span>🎂 Joined {DateTime.fromISO(authorCreatedAt, {
                             zone: "utc",
                         }).toRelative()}{" "} ago</span>
                         <span>🚀 Launched {products} products</span>

@@ -107,31 +107,8 @@ export const getPostById = async (
   { postId }: { postId: string }
 ) => {
   const { data, error } = await client
-    .from("posts")
-    .select(
-      `
-      post_id,
-      title,
-      content,
-      created_at,
-      updated_at,
-      profile_id,
-      topic_id,
-      profile:profiles!posts_profile_id_profiles_profile_id_fk (
-        profile_id,
-        username,
-        name,
-        avatar_url,
-        role,
-        created_at
-      ),
-      topic:topics (
-        topic_id,
-        name,
-        slug
-      )
-      `
-    )
+    .from("community_post_detail")
+    .select("*")
     .eq("post_id", parseInt(postId))
     .maybeSingle();
   if (error) {
