@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardFooter } from "~/common/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "~/common/components/ui/avatar";
 import { Button } from "~/common/components/ui/button";
-import { Link } from "react-router";
+import { Link, useFetcher } from "react-router";
 import { ChevronUpIcon, DotIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { DateTime } from "luxon";
@@ -32,7 +32,19 @@ export function PostCard({
     isUpvoted = false,
 }: PostCardProps) {
     const formattedDate = postedAt ? DateTime.fromJSDate(new Date(postedAt)).toRelative() : '';
-
+    const fetcher = useFetcher();
+    const absorbClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        fetcher.submit(
+            {
+                postId: id,
+            },
+            {
+                method: "POST",
+                action: `/community/${id}/upvote`,
+            }
+        );
+    };
     return (
         <Link to={`/community/${id}`} className="block">
             <Card
@@ -64,8 +76,9 @@ export function PostCard({
                     </CardFooter>
                 )}
                 {expanded && (
-                    <CardFooter className="flex justify-end  pb-0">
+                    <CardFooter className="flex justify-end pb-0">
                         <Button
+                            onClick={absorbClick}
                             variant="outline"
                             className={cn(
                                 "flex flex-col h-14",
