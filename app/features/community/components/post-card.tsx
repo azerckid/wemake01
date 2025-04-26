@@ -33,17 +33,19 @@ export function PostCard({
 }: PostCardProps) {
     const formattedDate = postedAt ? DateTime.fromJSDate(new Date(postedAt)).toRelative() : '';
     const fetcher = useFetcher();
+    const optimisitcVotesCount =
+        fetcher.state === "idle"
+            ? votesCount
+            : isUpvoted
+                ? votesCount - 1
+                : votesCount + 1;
+    const optimisitcIsUpvoted = fetcher.state === "idle" ? isUpvoted : !isUpvoted;
     const absorbClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        fetcher.submit(
-            {
-                postId: id,
-            },
-            {
-                method: "POST",
-                action: `/community/${id}/upvote`,
-            }
-        );
+        fetcher.submit(null, {
+            method: "POST",
+            action: `/community/${id}/upvote`,
+        });
     };
     return (
         <Link to={`/community/${id}`} className="block">
@@ -81,12 +83,11 @@ export function PostCard({
                             onClick={absorbClick}
                             variant="outline"
                             className={cn(
-                                "flex flex-col h-14",
-                                isUpvoted ? "border-primary text-primary" : ""
+                                optimisitcIsUpvoted ? "border-primary text-primary" : ""
                             )}
                         >
                             <ChevronUpIcon className="size-4 shrink-0" />
-                            <span>{votesCount}</span>
+                            <span>{optimisitcVotesCount}</span>
                         </Button>
                     </CardFooter>
                 )}
