@@ -113,6 +113,13 @@
       "when": 1743915118328,
       "tag": "0015_lying_angel",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1745901483636,
+      "tag": "0016_elite_lord_tyger",
+      "breakpoints": true
     }
   ]
 }

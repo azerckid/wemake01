@@ -1,4 +1,4 @@
-import { pgSchema, pgTable, text, timestamp, uuid, pgEnum, jsonb, unique, primaryKey, bigint } from "drizzle-orm/pg-core";
+import { pgSchema, pgTable, text, timestamp, uuid, pgEnum, jsonb, unique, primaryKey, bigint, boolean } from "drizzle-orm/pg-core";
 import { product } from "../products/schema";
 import { posts } from "../community/schema";
 
@@ -58,6 +58,7 @@ export const notifications = pgTable("notifications", {
             onDelete: "cascade",
         })
         .notNull(),
+    seen: boolean().default(false).notNull(),
     type: notificationType().notNull(),
     created_at: timestamp().notNull().defaultNow(),
 });
