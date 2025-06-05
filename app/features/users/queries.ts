@@ -249,6 +249,7 @@ export const getRoomsParticipant = async (
             `
         profile:profiles!profile_id!inner(
           name,
+          profile_id,
           avatar_url
         )
         `

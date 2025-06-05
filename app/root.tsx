@@ -63,6 +63,7 @@ export default function App({ loaderData }: Route.ComponentProps<typeof loader>)
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
   const isLoggedIn = loaderData.user !== null;
+  console.log("loaderData===========================", loaderData)
   return (
     <div
       className={cn({
@@ -82,10 +83,12 @@ export default function App({ loaderData }: Route.ComponentProps<typeof loader>)
       <Outlet
         context={{
           isLoggedIn,
-          name: loaderData.profile?.name,
           userId: loaderData.user?.id,
-          username: loaderData.profile?.username,
-          avatar: loaderData.profile?.avatar_url,
+          email: loaderData.user?.email,
+          name: loaderData.user?.profile?.name,
+          username: loaderData.user?.profile?.username,
+          avatar: loaderData.user?.profile?.avatar_url,
+          testmessage: "testmessage",
         }}
       />
     </div>);
