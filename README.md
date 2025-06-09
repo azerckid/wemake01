@@ -2,7 +2,7 @@
 
 Wemake는 개발자, 디자이너, 제품 관리자, 창업자 등이 자신의 제품을 공유하고 리뷰를 받을 수 있는 플랫폼입니다.
 
-![Wemake Screenshot](screenshot.png)
+![Wemake Screenshot]
 
 ## 주요 기능
 
