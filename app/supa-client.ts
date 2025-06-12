@@ -6,6 +6,7 @@ import {
 } from "@supabase/ssr";
 import type { MergeDeep, SetNonNullable, SetFieldType } from "type-fest";
 import type { Database as SupabaseDatabase } from "database.types";
+import { createClient } from "@supabase/supabase-js";
 
 export type Database = MergeDeep<
     SupabaseDatabase,
@@ -47,8 +48,8 @@ export type Database = MergeDeep<
 >;
 
 export const browserClient = createBrowserClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!
+    process.env.VITE_SUPABASE_URL!,
+    process.env.VITE_SUPABASE_ANON_KEY!
 );
 
 export const makeSSRClient = (request: Request) => {
@@ -99,3 +100,8 @@ export const makeSSRClient = (request: Request) => {
 
     return result;
 };
+
+export const adminClient = createClient<Database>(
+    process.env.VITE_SUPABASE_URL!,
+    process.env.VITE_SUPABASE_SERVICE_ROLE_KEY!
+);
